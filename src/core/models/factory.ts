@@ -7,8 +7,27 @@
 import dotenv from 'dotenv';
 import { ModelManager, createModelProvider, ModelProviderType } from './index';
 
-// Load environment variables from .env.local
-dotenv.config({ path: '.env.local' });
+// Override dotenv in Next.js environment
+console.log('Initializing model providers...');
+let envVars = {};
+try {
+  // In browser/server environment, we rely on .env.local being loaded by Next.js
+  if (process.env.ANTHROPIC_API_KEY) {
+    console.log('Found ANTHROPIC_API_KEY in environment');
+    envVars = process.env;
+  } else {
+    // In Node.js direct execution, we use dotenv
+    const result = dotenv.config({ path: '.env.local' });
+    if (result.error) {
+      console.warn('Error loading .env.local:', result.error);
+    } else {
+      console.log('.env.local loaded successfully');
+      envVars = result.parsed || {};
+    }
+  }
+} catch (error) {
+  console.warn('Error loading environment variables:', error);
+}
 
 /**
  * Initialize model providers from environment variables
@@ -17,6 +36,14 @@ dotenv.config({ path: '.env.local' });
  */
 export function initializeModelProviders(): ModelManager {
   const modelManager = new ModelManager();
+  
+  // Log the available environment variables for debugging
+  console.log('Available API keys:', {
+    'OpenAI': !!process.env.OPENAI_API_KEY,
+    'Anthropic': !!process.env.ANTHROPIC_API_KEY,
+    'Gemini': !!process.env.GEMINI_API_KEY,
+    'Ollama': process.env.ENABLE_OLLAMA
+  });
   
   // Get the default provider type from environment
   const defaultProviderType = process.env.DEFAULT_MODEL_PROVIDER || 'openai';
@@ -75,31 +102,33 @@ export function initializeModelProviders(): ModelManager {
   if (modelManager.listProviders().length === 0) {
     console.warn('No model providers configured. Please set API keys in .env.local');
     
-    // Add a fallback provider that throws an error when used
+    // Add a demo provider so we have something to show in the UI
     modelManager.addProvider(
-      'fallback',
+      'demo',
       {
-        generateCompletion: async () => {
-          throw new Error('No model providers configured. Please set API keys in .env.local');
+        generateCompletion: async (messages) => {
+          // Simple echo for demonstration
+          return `Demo response to: "${messages[messages.length - 1].content?.substring(0, 50)}..."\n\nThis is a demonstration provider. Please configure an API key in .env.local to use actual AI models.`;
         },
         generateEmbeddings: async () => {
-          throw new Error('No model providers configured. Please set API keys in .env.local');
+          // Return dummy embeddings
+          return new Array(1536).fill(0).map(() => Math.random() * 2 - 1);
         },
         getInfo: () => ({
-          name: 'Fallback',
+          name: 'Demo Provider',
           version: '1.0.0',
-          defaultCompletionModel: 'none',
-          defaultEmbeddingModel: 'none',
+          defaultCompletionModel: 'demo-model',
+          defaultEmbeddingModel: 'demo-embeddings',
           capabilities: {
             streaming: false,
             functionCalling: false,
             vision: false,
-            embeddings: false
+            embeddings: true
           },
-          maxTokens: 0
+          maxTokens: 1000
         })
       },
-      true
+      true // Set as default
     );
   }
   
