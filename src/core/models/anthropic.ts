@@ -85,7 +85,7 @@ export class AnthropicProvider extends BaseModelProvider {
         messages: convertedMessages,
         system: systemPrompt,
         temperature: options?.temperature,
-        max_tokens: options?.maxTokens,
+        max_tokens: options?.maxTokens || 1000, // Default to 1000 tokens if not specified
         top_p: options?.topP,
       };
       
