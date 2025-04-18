@@ -7,11 +7,18 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "task-master": "task-master"
+    "task-master": "task-master",
+    "process-task": "tsx scripts/task-nexus-bridge.ts",
+    "test-agent": "tsx scripts/run-first-task.ts",
+    "test-tool": "tsx scripts/test-tool.ts",
+    "test-memory": "tsx tests/memory.test.ts",
+    "test": "npm run test-memory && echo 'All tests completed'",
+    "setup": "bash scripts/setup.sh"
   },
   "dependencies": {
     "agno": "^0.9.0",
     "claude-task-master": "github:eyaltoledano/claude-task-master",
+    "dotenv": "^16.3.1",
     "next": "14.1.0",
     "react": "^18",
     "react-dom": "^18",
@@ -26,6 +33,7 @@
     "eslint-config-next": "14.1.0",
     "postcss": "^8",
     "tailwindcss": "^3.3.0",
-    "typescript": "^5"
+    "typescript": "^5",
+    "tsx": "^4.6.2"
   }
 }
