@@ -15,10 +15,31 @@ if ! command -v pip3 &> /dev/null; then
     exit 1
 fi
 
-# Install Agno using pip
-echo "Installing Agno using pip..."
-pip3 install -U agno
-echo "Agno installed successfully."
+# Create and activate a Python virtual environment for Agno
+echo "Creating a Python virtual environment for Agno..."
+
+# Create the venv directory if it doesn't exist
+if [ ! -d "venv" ]; then
+    python3 -m venv venv
+    echo "Virtual environment created."
+else
+    echo "Virtual environment already exists."
+fi
+
+# Install Agno in the virtual environment
+echo "Installing Agno in the virtual environment..."
+./venv/bin/pip install -U agno
+echo "Agno installed successfully in the virtual environment."
+
+# Create an activation script
+cat > activate-agno.sh << EOL
+#!/bin/bash
+source venv/bin/activate
+echo "Agno virtual environment activated. Run 'deactivate' when done."
+EOL
+
+chmod +x activate-agno.sh
+echo "Created activation script: activate-agno.sh"
 
 
 # Check if Node.js is installed
@@ -88,6 +109,28 @@ next-env.d.ts
 # IDE
 .vscode/
 .idea/
+
+# Python
+/venv/
+__pycache__/
+*.py[cod]
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 EOL
     echo ".gitignore file created."
 fi

@@ -89,7 +89,17 @@ Benefits of multi-model support:
    - Add your API keys for the providers you want to use
    - Set your default provider
 
-4. Run the development server:
+4. Activate the Agno Python virtual environment:
+   ```bash
+   source ./activate-agno.sh
+   ```
+   
+   After you're done working with Agno, you can deactivate the environment:
+   ```bash
+   deactivate
+   ```
+
+5. Run the development server:
    ```bash
    npm run dev
    # or
@@ -98,7 +108,7 @@ Benefits of multi-model support:
    pnpm dev
    ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser to see the result.
+6. Open [http://localhost:3000](http://localhost:3000) in your browser to see the result.
 
 ## Usage
 
