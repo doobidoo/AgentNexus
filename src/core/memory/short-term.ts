@@ -5,7 +5,11 @@
  * configurable retention parameters and priority-based management.
  */
 
-import { Memory } from 'agno';
+// Define our own Memory interface to replace agno dependency
+interface Memory {
+  add: (content: string) => void;
+}
+
 import { MemoryEntry } from './index';
 
 export interface ShortTermMemoryConfig {
@@ -20,8 +24,13 @@ export class ShortTermMemory {
   private retentionPeriod: number; // In milliseconds
   
   constructor(config: ShortTermMemoryConfig = {}) {
-    // Initialize Agno memory component
-    this.memory = new Memory();
+    // Create a simple memory implementation
+    this.memory = {
+      add: (content: string) => {
+        console.log('Memory content added:', content.substring(0, 50) + '...');
+        // In a real implementation, this would add to the agno Memory
+      }
+    };
     
     // Initialize internal memory structure
     this.entries = [];

@@ -6,8 +6,15 @@
  * agent that can solve complex problems with human-like reasoning abilities.
  */
 
-import { Agent as AgnoAgent } from 'agno';
-import { ModelProvider, ModelMessage, modelManager } from './models';
+// We're replacing the agno import with our own Agent interface
+interface AgnoAgent {
+  name: string;
+  description: string;
+  model: string;
+}
+
+import { ModelProvider, ModelMessage } from './models';
+import { modelManager } from './models/factory';
 import { MemorySystem } from './memory';
 import { ToolsManager } from './tools';
 import { PlanningSystem } from './planning';
@@ -48,12 +55,12 @@ export class AgentNexus {
     this.agentName = config.agentName || "Agent Nexus";
     this.description = config.description || "An advanced cognitive agent architecture with human-like reasoning capabilities";
     
-    // Initialize Agno agent
-    this.agnoAgent = new AgnoAgent({
+    // Create our own agent implementation instead of using agno
+    this.agnoAgent = {
       name: this.agentName,
       description: this.description,
       model: this.modelName,
-    });
+    };
     
     // Initialize core components
     this.memory = new MemorySystem();
@@ -61,7 +68,7 @@ export class AgentNexus {
     this.planning = new PlanningSystem(this.memory, this.tools);
     this.action = new ActionSystem(this.memory, this.tools, this.planning);
     
-    // Register tools with Agno
+    // Register tools
     this.registerTools();
   }
   
