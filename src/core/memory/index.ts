@@ -34,18 +34,24 @@ export class MemorySystem {
    * 
    * @param data The data to store
    * @param memoryType Where to store the data (short-term, long-term, or both)
+   * @returns Promise that resolves when storage is complete
    */
-  store(data: any, memoryType: MemoryType = 'both'): void {
+  async store(data: any, memoryType: MemoryType = 'both'): Promise<void> {
     // Convert simple data to memory entry if needed
     const entry: MemoryEntry = this.normalizeEntry(data);
+    
+    // Use Promise.all to store in both memory systems concurrently if needed
+    const promises: Promise<void>[] = [];
     
     if (memoryType === 'short' || memoryType === 'both') {
       this.shortTerm.store(entry);
     }
     
     if (memoryType === 'long' || memoryType === 'both') {
-      this.longTerm.store(entry);
+      promises.push(this.longTerm.store(entry));
     }
+    
+    await Promise.all(promises);
   }
   
   /**
@@ -58,15 +64,23 @@ export class MemorySystem {
   async retrieve(query: string, memoryType: MemoryType = 'both'): Promise<MemoryEntry[]> {
     const results: MemoryEntry[] = [];
     
+    const promises: Promise<void>[] = [];
+    
     if (memoryType === 'short' || memoryType === 'both') {
-      const shortTermResults = await this.shortTerm.retrieve(query);
-      results.push(...shortTermResults);
+      const shortTermPromise = this.shortTerm.retrieve(query).then(shortTermResults => {
+        results.push(...shortTermResults);
+      });
+      promises.push(shortTermPromise);
     }
     
     if (memoryType === 'long' || memoryType === 'both') {
-      const longTermResults = await this.longTerm.retrieve(query);
-      results.push(...longTermResults);
+      const longTermPromise = this.longTerm.retrieve(query).then(longTermResults => {
+        results.push(...longTermResults);
+      });
+      promises.push(longTermPromise);
     }
+    
+    await Promise.all(promises);
     
     return results;
   }
@@ -96,6 +110,21 @@ export class MemorySystem {
       ...data,
       timestamp: new Date().toISOString(),
       priority: data.priority || 5
+    };
+  }
+  
+  /**
+   * Get all entries from both memory systems
+   * 
+   * @returns Object containing all memory entries
+   */
+  async getAllEntries(): Promise<{shortTerm: MemoryEntry[], longTerm: MemoryEntry[]}> {
+    const shortTermEntries = this.shortTerm.getAll();
+    const longTermEntries = await this.longTerm.getAll();
+    
+    return {
+      shortTerm: shortTermEntries,
+      longTerm: longTermEntries
     };
   }
 }
