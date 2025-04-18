@@ -23,6 +23,11 @@ The Agent Nexus architecture consists of four core components:
 
 4. **Action**: The execution layer that implements plans and processes feedback to improve future performance.
 
+## Visualisation
+
+![Agent Architecture](./media/AgentNexus.gif)
+Source: [LinkedIn Post](https://www.linkedin.com/posts/leadgenmanthan_the-future-of-ai-is-agent-architecture-activity-7317020448800620544-n1DM?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAAAEKcBABpX_w4skUzI2RjUnug_hH9TDdIJc)
+
 ## Key Advantages
 
 1. **Self-Correction**: The architecture enables agents to critique their own work before execution, significantly reducing errors.
