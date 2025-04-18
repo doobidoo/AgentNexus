@@ -76,7 +76,18 @@ export class OllamaProvider extends BaseModelProvider {
       
       // Extract and return the completion text
       return response.data.message?.content || '';
-    } catch (error) {
+    } catch (error: any) {
+      // Check if this is a model not found error
+      if (error.response?.status === 404 && error.response?.data?.error?.includes('model') && error.response?.data?.error?.includes('not found')) {
+        const modelName = options?.responseFormat?.model || this.info.defaultCompletionModel;
+        throw new Error(`Ollama model "${modelName}" not found. Please install it using 'ollama pull ${modelName}' command.`);
+      }
+      
+      // Check if this is a connection error
+      if (error.code === 'ECONNREFUSED') {
+        throw new Error(`Cannot connect to Ollama server at ${this.baseUrl}. Make sure Ollama is running.`);
+      }
+      
       console.error('Error generating completion with Ollama:', error);
       throw new Error(`Ollama completion error: ${error}`);
     }
@@ -103,7 +114,18 @@ export class OllamaProvider extends BaseModelProvider {
         // Single embedding generation
         return await this.generateSingleEmbedding(text, modelName);
       }
-    } catch (error) {
+    } catch (error: any) {
+      // Check if this is a model not found error
+      if (error.response?.status === 404 && error.response?.data?.error?.includes('model') && error.response?.data?.error?.includes('not found')) {
+        const modelName = options?.model || this.info.defaultEmbeddingModel;
+        throw new Error(`Ollama model "${modelName}" not found. Please install it using 'ollama pull ${modelName}' command.`);
+      }
+      
+      // Check if this is a connection error
+      if (error.code === 'ECONNREFUSED') {
+        throw new Error(`Cannot connect to Ollama server at ${this.baseUrl}. Make sure Ollama is running.`);
+      }
+      
       console.error('Error generating embeddings with Ollama:', error);
       throw new Error(`Ollama embeddings error: ${error}`);
     }
