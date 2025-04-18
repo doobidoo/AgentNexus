@@ -45,6 +45,11 @@ async function testProvider(providerName: string) {
       
       console.log(`Completion (${duration}ms):`);
       console.log(completion);
+      
+      // If response is empty, log it clearly
+      if (!completion || completion.trim() === '') {
+        console.log('WARNING: Empty response received from the model');
+      }
     }
     
     // Test embeddings if supported

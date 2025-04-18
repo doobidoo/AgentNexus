@@ -63,6 +63,8 @@ export class OllamaProvider extends BaseModelProvider {
       const modelName = options?.responseFormat?.model || this.info.defaultCompletionModel;
       const convertedMessages = this.convertMessages(messages);
       
+      // The Ollama API returns responses in a streaming fashion
+      // Each line of the response contains a JSON object with a token
       const response = await axios.post(`${this.baseUrl}/api/chat`, {
         model: modelName,
         messages: convertedMessages,
@@ -72,10 +74,28 @@ export class OllamaProvider extends BaseModelProvider {
           num_predict: options?.maxTokens,
           stop: options?.stop
         }
+      }, {
+        // Set response type to text to get raw response
+        responseType: 'text'
       });
       
-      // Extract and return the completion text
-      return response.data.message?.content || '';
+      // The response is a multi-line string, each line is a JSON object
+      // We need to parse each line and extract the content
+      let fullContent = '';
+      const lines = response.data.trim().split('\n');
+      
+      for (const line of lines) {
+        try {
+          const parsedLine = JSON.parse(line);
+          if (parsedLine.message && parsedLine.message.content) {
+            fullContent += parsedLine.message.content;
+          }
+        } catch (err) {
+          console.warn('Error parsing Ollama response line:', err);
+        }
+      }
+      
+      return fullContent;
     } catch (error: any) {
       // Check if this is a model not found error
       if (error.response?.status === 404 && error.response?.data?.error?.includes('model') && error.response?.data?.error?.includes('not found')) {
