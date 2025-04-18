@@ -7,15 +7,16 @@
  */
 
 import { Agent as AgnoAgent } from 'agno';
+import { ModelProvider, ModelMessage, modelManager } from './models';
 import { MemorySystem } from './memory';
 import { ToolsManager } from './tools';
 import { PlanningSystem } from './planning';
 import { ActionSystem } from './action';
 
 export interface AgentConfig {
-  apiKey: string;
+  modelProvider?: ModelProvider | string;
   modelName?: string;
-  name?: string;
+  agentName?: string;
   description?: string;
 }
 
@@ -25,14 +26,33 @@ export class AgentNexus {
   private planning: PlanningSystem;
   private action: ActionSystem;
   private agnoAgent: AgnoAgent;
+  private modelProvider: ModelProvider;
+  private modelName: string;
+  private agentName: string;
+  private description: string;
 
-  constructor(config: AgentConfig) {
+  constructor(config: AgentConfig = {}) {
+    // Get model provider
+    if (typeof config.modelProvider === 'string') {
+      this.modelProvider = modelManager.getProvider(config.modelProvider);
+    } else if (config.modelProvider) {
+      this.modelProvider = config.modelProvider;
+    } else {
+      this.modelProvider = modelManager.getProvider();
+    }
+    
+    // Set model name (use provider's default if not specified)
+    this.modelName = config.modelName || this.modelProvider.getInfo().defaultCompletionModel;
+    
+    // Set agent name and description
+    this.agentName = config.agentName || "Agent Nexus";
+    this.description = config.description || "An advanced cognitive agent architecture with human-like reasoning capabilities";
+    
     // Initialize Agno agent
     this.agnoAgent = new AgnoAgent({
-      apiKey: config.apiKey,
-      name: config.name || "Agent Nexus",
-      description: config.description || "An advanced cognitive agent architecture with human-like reasoning capabilities",
-      model: config.modelName || "claude-3-7-sonnet-20250219", // Using Claude for high reasoning capability
+      name: this.agentName,
+      description: this.description,
+      model: this.modelName,
     });
     
     // Initialize core components
@@ -99,11 +119,17 @@ export class AgentNexus {
     // Generate system message with context from planning
     const systemMessage = this.planning.generateSystemMessage();
     
-    // Use Agno's chat capability
-    const response = await this.agnoAgent.chat([
+    // Create messages array for the model
+    const messages: ModelMessage[] = [
       { role: "system", content: systemMessage },
       { role: "user", content: message }
-    ]);
+    ];
+    
+    // Use the model provider directly for chat
+    const response = await this.modelProvider.generateCompletion(messages, {
+      temperature: 0.7,
+      model: this.modelName
+    });
     
     // Store response in memory
     this.memory.store({
@@ -113,5 +139,35 @@ export class AgentNexus {
     }, 'short');
     
     return response;
+  }
+  
+  /**
+   * Get the information about the model provider being used
+   * 
+   * @returns Model provider information
+   */
+  getModelInfo() {
+    return {
+      provider: this.modelProvider.getInfo().name,
+      model: this.modelName,
+      agentName: this.agentName
+    };
+  }
+  
+  /**
+   * Switch to a different model provider
+   * 
+   * @param providerName Name of the provider to switch to
+   * @param modelName Optional model name to use
+   */
+  switchModelProvider(providerName: string, modelName?: string) {
+    // Get the new model provider
+    const newProvider = modelManager.getProvider(providerName);
+    
+    // Update the provider and model name
+    this.modelProvider = newProvider;
+    this.modelName = modelName || newProvider.getInfo().defaultCompletionModel;
+    
+    console.log(`Switched to ${this.modelProvider.getInfo().name} provider with model ${this.modelName}`);
   }
 }

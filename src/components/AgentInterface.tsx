@@ -6,7 +6,8 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import ModelSelector from './ModelSelector';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -14,11 +15,38 @@ interface Message {
   timestamp: string;
 }
 
+interface ModelInfo {
+  provider: string;
+  model: string;
+}
+
 export default function AgentInterface() {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [mode, setMode] = useState<'chat' | 'task'>('chat');
+  const [modelInfo, setModelInfo] = useState<ModelInfo | null>(null);
+
+  // Fetch initial model info
+  useEffect(() => {
+    async function fetchModelInfo() {
+      try {
+        const response = await fetch('/api/agent/model-info');
+        const data = await response.json();
+        
+        if (data.provider && data.model) {
+          setModelInfo({
+            provider: data.provider,
+            model: data.model
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching model info:', error);
+      }
+    }
+    
+    fetchModelInfo();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,7 +69,12 @@ export default function AgentInterface() {
       const response = await fetch('/api/agent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: input, type: mode })
+        body: JSON.stringify({ 
+          message: input, 
+          type: mode,
+          provider: modelInfo?.provider,
+          model: modelInfo?.model
+        })
       });
       
       if (!response.ok) {
@@ -72,20 +105,75 @@ export default function AgentInterface() {
     }
   };
   
+  const handleModelChange = async (provider: string, model: string) => {
+    try {
+      // Update the model on the server
+      const response = await fetch('/api/agent/switch-model', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ provider, model })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      // Update local state
+      setModelInfo({
+        provider: data.provider,
+        model: data.model
+      });
+      
+      // Add system message
+      const systemMessage: Message = {
+        role: 'assistant',
+        content: `Switched to ${data.provider} using ${data.model}`,
+        timestamp: new Date().toISOString()
+      };
+      
+      setMessages(prev => [...prev, systemMessage]);
+    } catch (error) {
+      console.error('Error switching model:', error);
+      
+      // Add error message
+      const errorMessage: Message = {
+        role: 'assistant',
+        content: `Error switching model: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        timestamp: new Date().toISOString()
+      };
+      
+      setMessages(prev => [...prev, errorMessage]);
+    }
+  };
+  
   return (
     <div className="flex flex-col h-screen max-w-4xl mx-auto p-4">
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold">Agent Nexus</h1>
-        <div className="flex items-center space-x-2">
-          <span>Mode:</span>
-          <select 
-            value={mode} 
-            onChange={(e) => setMode(e.target.value as 'chat' | 'task')}
-            className="p-2 border rounded"
-          >
-            <option value="chat">Chat</option>
-            <option value="task">Task</option>
-          </select>
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">Agent Nexus</h1>
+          <div className="text-sm text-gray-500">Cognitive Agent Architecture</div>
+        </div>
+        
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-4 w-full md:w-auto">
+          <ModelSelector 
+            initialProvider={modelInfo?.provider}
+            initialModel={modelInfo?.model}
+            onProviderChange={handleModelChange}
+          />
+          
+          <div className="flex items-center">
+            <span className="mr-2">Mode:</span>
+            <select 
+              value={mode} 
+              onChange={(e) => setMode(e.target.value as 'chat' | 'task')}
+              className="p-2 border rounded"
+            >
+              <option value="chat">Chat</option>
+              <option value="task">Task</option>
+            </select>
+          </div>
         </div>
       </div>
       

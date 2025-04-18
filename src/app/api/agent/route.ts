@@ -1,28 +1,33 @@
 /**
- * Agent Nexus API Endpoint
- * 
- * This API route integrates with the Agent Nexus architecture and
- * allows communication with the agent through a REST interface.
+ * API route for interacting with the Agent Nexus
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { AgentNexus } from '@/core/agent';
+import { modelManager } from '@/core/models/factory';
 
-// Initialize the agent (in a production app, you'd manage this differently)
+// Agent singleton (in a real application, you'd manage this differently)
 let agentInstance: AgentNexus | null = null;
 
-function getAgent() {
+function getAgent(provider?: string, model?: string) {
   if (!agentInstance) {
-    const apiKey = process.env.OPENAI_API_KEY || '';
-    if (!apiKey) {
-      throw new Error('OPENAI_API_KEY environment variable is required');
+    // If no specific provider is requested, use the first available one
+    const defaultProvider = provider || modelManager.listProviders()[0];
+    
+    if (!defaultProvider) {
+      throw new Error('No model providers available. Please configure at least one provider.');
     }
     
     agentInstance = new AgentNexus({
-      apiKey,
-      name: "Agent Nexus",
+      modelProvider: defaultProvider,
+      modelName: model,
+      agentName: "Agent Nexus",
       description: "An advanced cognitive agent architecture with human-like reasoning capabilities"
     });
+  } else if (provider) {
+    // If a specific provider is requested and we already have an agent,
+    // switch the existing agent to the requested provider
+    agentInstance.switchModelProvider(provider, model);
   }
   
   return agentInstance;
@@ -30,14 +35,14 @@ function getAgent() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { message, type = 'chat' } = await request.json();
+    const { message, type = 'chat', provider, model } = await request.json();
     
     if (!message) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 });
     }
     
-    // Get or initialize the agent
-    const agent = getAgent();
+    // Get or initialize the agent with the specified provider and model
+    const agent = getAgent(provider, model);
     
     let response;
     
