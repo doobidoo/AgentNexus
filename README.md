@@ -204,3 +204,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 - [Agno](https://github.com/agno-agi/agno) - For the agent framework
 - [claude-task-master](https://github.com/eyaltoledano/claude-task-master) - For the task management system
+- [Manthan Patel](https://www.udemy.com/user/manthan-patel-4/) - For the ignition with this [LinkedIn Post](https://www.linkedin.com/posts/leadgenmanthan_the-future-of-ai-is-agent-architecture-activity-7317020448800620544-n1DM?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAAAEKcBABpX_w4skUzI2RjUnug_hH9TDdIJc)
