@@ -2,7 +2,7 @@
 
 Agent Nexus is an advanced cognitive agent architecture framework that enables AI systems to operate with human-like reasoning abilities. By integrating memory management, specialized tools, strategic planning, and action execution into a cohesive system, Agent Nexus creates agents that can solve complex problems, learn from experience, and provide continuous value.
 
-![Agent Architecture](/public/agent-architecture.png)
+![Agent Architecture](./media/AgentNexus.gif)
 
 ## Architecture Overview
 
@@ -11,7 +11,7 @@ The Agent Nexus architecture consists of four core components:
 1. **Memory**: Divided into short-term (for immediate context) and long-term (for persistent knowledge), allowing the agent to maintain continuity across interactions.
 
 2. **Tools**: A suite of capabilities including:
-   - VectorSearch() - Semantic similarity search
+   - VectorSearch() - Semantic similaritys search
    - TextGeneration() - Context-aware content creation
    - CodeExecutor() - Secure code execution
    - WebBrowser() - Web access and information retrieval
