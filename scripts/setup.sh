@@ -3,6 +3,24 @@
 
 echo "Setting up Agent Nexus development environment..."
 
+# Check if Python is installed
+if ! command -v python3 &> /dev/null; then
+    echo "Python 3 is required but not installed. Please install Python 3 and try again."
+    exit 1
+fi
+
+# Check if pip is installed
+if ! command -v pip3 &> /dev/null; then
+    echo "pip3 is required but not installed. Please install pip3 and try again."
+    exit 1
+fi
+
+# Install Agno using pip
+echo "Installing Agno using pip..."
+pip3 install -U agno
+echo "Agno installed successfully."
+
+
 # Check if Node.js is installed
 if ! command -v node &> /dev/null; then
     echo "Node.js is required but not installed. Please install Node.js 18+ and try again."
