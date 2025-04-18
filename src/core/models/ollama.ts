@@ -63,53 +63,70 @@ export class OllamaProvider extends BaseModelProvider {
       const modelName = options?.responseFormat?.model || this.info.defaultCompletionModel;
       const convertedMessages = this.convertMessages(messages);
       
+      console.log(`[Ollama] Generating completion with model: ${modelName}`);
+      console.log(`[Ollama] Base URL: ${this.baseUrl}`);
+      
       // The Ollama API returns responses in a streaming fashion
       // Each line of the response contains a JSON object with a token
-      const response = await axios.post(`${this.baseUrl}/api/chat`, {
-        model: modelName,
-        messages: convertedMessages,
-        temperature: options?.temperature,
-        top_p: options?.topP,
-        options: {
-          num_predict: options?.maxTokens,
-          stop: options?.stop
-        }
-      }, {
-        // Set response type to text to get raw response
-        responseType: 'text'
-      });
-      
-      // The response is a multi-line string, each line is a JSON object
-      // We need to parse each line and extract the content
-      let fullContent = '';
-      const lines = response.data.trim().split('\n');
-      
-      for (const line of lines) {
-        try {
-          const parsedLine = JSON.parse(line);
-          if (parsedLine.message && parsedLine.message.content) {
-            fullContent += parsedLine.message.content;
+      try {
+        console.log('[Ollama] Sending request to API...');
+        const response = await axios.post(`${this.baseUrl}/api/chat`, {
+          model: modelName,
+          messages: convertedMessages,
+          temperature: options?.temperature,
+          top_p: options?.topP,
+          options: {
+            num_predict: options?.maxTokens,
+            stop: options?.stop
           }
-        } catch (err) {
-          console.warn('Error parsing Ollama response line:', err);
+        }, {
+          // Set response type to text to get raw response
+          responseType: 'text'
+        });
+        
+        console.log(`[Ollama] Response received. Status: ${response.status}`);
+        
+        // The response is a multi-line string, each line is a JSON object
+        // We need to parse each line and extract the content
+        let fullContent = '';
+        const lines = response.data.trim().split('\n');
+        
+        console.log(`[Ollama] Processing ${lines.length} response lines`);
+        
+        for (const line of lines) {
+          try {
+            const parsedLine = JSON.parse(line);
+            if (parsedLine.message && parsedLine.message.content) {
+              fullContent += parsedLine.message.content;
+            }
+          } catch (err) {
+            console.warn('[Ollama] Error parsing response line:', err);
+          }
+        }
+        
+        console.log(`[Ollama] Final response length: ${fullContent.length} chars`);
+        return fullContent;
+      } catch (axiosError: any) {
+        // Handle Axios-specific errors
+        if (axiosError.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          if (axiosError.response.status === 404 && axiosError.response.data?.error?.includes('model') && axiosError.response.data?.error?.includes('not found')) {
+            throw new Error(`Ollama model "${modelName}" not found. Please install it using 'ollama pull ${modelName}' command.`);
+          } else {
+            throw new Error(`Ollama API error (${axiosError.response.status}): ${axiosError.response.data?.error || 'Unknown error'}`);
+          }
+        } else if (axiosError.request) {
+          // The request was made but no response was received
+          throw new Error(`Cannot connect to Ollama server at ${this.baseUrl}. Make sure Ollama is running.`);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          throw new Error(`Error setting up Ollama request: ${axiosError.message}`);
         }
       }
-      
-      return fullContent;
     } catch (error: any) {
-      // Check if this is a model not found error
-      if (error.response?.status === 404 && error.response?.data?.error?.includes('model') && error.response?.data?.error?.includes('not found')) {
-        const modelName = options?.responseFormat?.model || this.info.defaultCompletionModel;
-        throw new Error(`Ollama model "${modelName}" not found. Please install it using 'ollama pull ${modelName}' command.`);
-      }
-      
-      // Check if this is a connection error
-      if (error.code === 'ECONNREFUSED') {
-        throw new Error(`Cannot connect to Ollama server at ${this.baseUrl}. Make sure Ollama is running.`);
-      }
-      
-      console.error('Error generating completion with Ollama:', error);
-      throw new Error(`Ollama completion error: ${error}`);
+      console.error('[Ollama] Error generating completion:', error);
+      throw new Error(`Ollama completion error: ${error.message || String(error)}`);
     }
   }
   

@@ -1,3 +1,4 @@
+
 /**
  * Model Factory
  * 
@@ -36,6 +37,35 @@ try {
  */
 export function initializeModelProviders(): ModelManager {
   const modelManager = new ModelManager();
+  
+  // Add a demo provider first - always available
+  modelManager.addProvider(
+    'demo',
+    {
+      generateCompletion: async (messages) => {
+        // Simple echo for demonstration
+        return `Demo response to: "${messages[messages.length - 1].content?.substring(0, 50)}..."\n\nThis is a demonstration provider. Please configure an API key in .env.local to use actual AI models.`;
+      },
+      generateEmbeddings: async () => {
+        // Return dummy embeddings
+        return new Array(1536).fill(0).map(() => Math.random() * 2 - 1);
+      },
+      getInfo: () => ({
+        name: 'Demo Provider',
+        version: '1.0.0',
+        defaultCompletionModel: 'demo-model',
+        defaultEmbeddingModel: 'demo-embeddings',
+        capabilities: {
+          streaming: false,
+          functionCalling: false,
+          vision: false,
+          embeddings: true
+        },
+        maxTokens: 1000
+      })
+    },
+    false // Only set as default if explicitly requested
+  );
   
   // Log the available environment variables for debugging
   console.log('Available API keys:', {

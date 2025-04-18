@@ -80,6 +80,13 @@ export class AnthropicProvider extends BaseModelProvider {
       const systemPrompt = this.extractSystemPrompt(messages);
       const convertedMessages = this.convertMessages(messages.filter(msg => msg.role !== 'system'));
       
+      // Check if we have a valid API key
+      if (!this.apiKey || this.apiKey.trim() === '') {
+        throw new Error('Anthropic API key is not configured');
+      }
+      
+      console.log(`[Anthropic] Generating completion with model: ${options?.responseFormat?.model || this.info.defaultCompletionModel}`);
+      
       const completionOptions: any = {
         model: options?.responseFormat?.model || this.info.defaultCompletionModel,
         messages: convertedMessages,
@@ -98,13 +105,32 @@ export class AnthropicProvider extends BaseModelProvider {
         }));
       }
       
+      console.log('[Anthropic] Sending request to API...');
       const response = await this.client.messages.create(completionOptions);
       
       // Extract and return the completion text
-      return response.content[0].text || '';
-    } catch (error) {
-      console.error('Error generating completion with Anthropic:', error);
-      throw new Error(`Anthropic completion error: ${error}`);
+      const result = response.content[0].text || '';
+      console.log(`[Anthropic] Response received (${result.length} chars)`);
+      return result;
+    } catch (error: any) {
+      console.error('[Anthropic] Error generating completion:', error);
+      
+      // Provide more specific error messages based on common error types
+      if (error.status === 401 || error.status === 403) {
+        throw new Error('Authentication failed with Anthropic API. Please check your API key.');
+      } else if (error.status === 400) {
+        if (error.error?.message?.includes('max_tokens')) {
+          throw new Error('Invalid request: max_tokens parameter issue. Using default value of 1000.');
+        } else {
+          throw new Error(`Bad request to Anthropic API: ${error.error?.message || 'Unknown validation error'}`);
+        }
+      } else if (error.status === 429) {
+        throw new Error('Anthropic API rate limit exceeded. Please try again later.');
+      } else if (error.status === 500) {
+        throw new Error('Anthropic API server error. Please try again later.');
+      }
+      
+      throw new Error(`Anthropic API error: ${error.message || 'Unknown error'}`);
     }
   }
   

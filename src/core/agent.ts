@@ -116,6 +116,8 @@ export class AgentNexus {
    * @returns The agent's response
    */
   async chat(message: string): Promise<string> {
+    console.log(`[Agent] Chat request with model: ${this.modelName} from provider: ${this.modelProvider.getInfo().name}`);
+    
     // Store message in short-term memory
     this.memory.store({
       role: "user",
@@ -132,20 +134,37 @@ export class AgentNexus {
       { role: "user", content: message }
     ];
     
-    // Use the model provider directly for chat
-    const response = await this.modelProvider.generateCompletion(messages, {
-      temperature: 0.7,
-      model: this.modelName
-    });
-    
-    // Store response in memory
-    this.memory.store({
-      role: "assistant",
-      content: response,
-      timestamp: new Date().toISOString()
-    }, 'short');
-    
-    return response;
+    try {
+      // Use the model provider directly for chat
+      console.log(`[Agent] Sending request to provider...`);
+      
+      const response = await this.modelProvider.generateCompletion(messages, {
+        temperature: 0.7,
+        maxTokens: 1000,
+        model: this.modelName
+      });
+      
+      console.log(`[Agent] Got response of length: ${response?.length || 0}`);
+      
+      // Store response in memory
+      this.memory.store({
+        role: "assistant",
+        content: response,
+        timestamp: new Date().toISOString()
+      }, 'short');
+      
+      return response;
+    } catch (error) {
+      // Log the error but return a user-friendly message
+      console.error('[Agent] Error in chat method:', error);
+      
+      // Create a simple fallback response if the model fails
+      if (this.modelProvider.getInfo().name === 'Demo Provider') {
+        return `This is a demo response. The model would normally generate a response to: "${message.substring(0, 50)}..."\n\nPlease configure actual API keys for better results.`;
+      }
+      
+      throw new Error(`Failed to generate a response: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   }
   
   /**
