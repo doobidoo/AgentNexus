@@ -1,11 +1,11 @@
 /**
  * VectorSearch Tool for Agent Nexus
  * 
- * Performs semantic similarity search using vector embeddings.
- * This is a simplified implementation that will be enhanced in future versions.
+ * Performs semantic similarity search using vector embeddings via Weaviate.
  */
 
 import { AbstractTool, ToolInput, ToolOutput } from './base';
+import weaviate, { WeaviateClient } from 'weaviate-ts-client';
 
 export interface VectorSearchParams {
   query: string;
@@ -23,6 +23,9 @@ export interface VectorSearchResult {
 }
 
 export class VectorSearch extends AbstractTool {
+  private client: WeaviateClient;
+  private defaultCollection: string = 'Documents';
+
   constructor() {
     super(
       'vectorSearch',
@@ -30,13 +33,16 @@ export class VectorSearch extends AbstractTool {
       ['semantic search', 'vector similarity', 'content retrieval'],
       '1.0.0'
     );
+
+    // Initialize Weaviate client
+    this.client = weaviate.client({
+      scheme: 'http',
+      host: 'localhost:8080',
+    });
   }
   
   /**
    * Validate the vector search parameters
-   * 
-   * @param input Tool input to validate
-   * @returns Boolean indicating if the input is valid
    */
   validate(input: ToolInput): boolean {
     const params = input.params as VectorSearchParams;
@@ -53,9 +59,6 @@ export class VectorSearch extends AbstractTool {
   
   /**
    * Execute vector search with the provided parameters
-   * 
-   * @param input Search parameters and context
-   * @returns Search results
    */
   async execute(input: ToolInput): Promise<ToolOutput> {
     try {
@@ -67,7 +70,7 @@ export class VectorSearch extends AbstractTool {
       const params = input.params as VectorSearchParams;
       const { 
         query, 
-        collection = 'default', 
+        collection = this.defaultCollection, 
         topK = 5, 
         similarityThreshold = 0.7,
         filters = {}
@@ -75,88 +78,118 @@ export class VectorSearch extends AbstractTool {
       
       console.log(`Searching for "${query}" in collection "${collection}"`);
       
-      // In a real implementation, this would connect to a vector database
-      // For now, we'll simulate the results
-      const results = await this.simulateVectorSearch(query, collection, topK, similarityThreshold, filters);
-      
-      return this.createSuccessOutput(results, input);
+      // Build the Weaviate query
+      let queryBuilder = this.client.graphql
+        .get()
+        .withClassName(collection)
+        .withNearText({ concepts: [query] })
+        .withLimit(topK)
+        .withFields('content metadata _additional { certainty }');
+
+      // Add filters if specified
+      if (Object.keys(filters).length > 0) {
+        const whereFilter = Object.entries(filters).reduce((acc, [key, value]) => {
+          acc[`metadata_${key}`] = { equals: value };
+          return acc;
+        }, {} as Record<string, any>);
+        queryBuilder = queryBuilder.withWhere(whereFilter);
+      }
+
+      // Execute the search
+      const result = await queryBuilder.do();
+
+      if (!result.data || !result.data[collection]) {
+        return this.createErrorOutput('No results found', input);
+      }
+
+      // Transform Weaviate results into our format
+      const searchResults: VectorSearchResult[] = result.data[collection]
+        .map((item: any) => ({
+          id: item._additional.id,
+          content: item.content,
+          metadata: item.metadata,
+          score: item._additional.certainty
+        }))
+        .filter((item: VectorSearchResult) => item.score >= similarityThreshold);
+
+      return this.createSuccessOutput(searchResults, input);
     } catch (error) {
       console.error('Error in vector search:', error);
       return this.createErrorOutput(`Vector search failed: ${error}`, input);
     }
   }
-  
+
   /**
-   * Simulate a vector search (for demonstration purposes)
-   * In a real implementation, this would connect to a vector database
-   * 
-   * @param query Search query
-   * @param collection Collection to search in
-   * @param topK Number of results to return
-   * @param similarityThreshold Minimum similarity score
-   * @param filters Metadata filters to apply
-   * @returns Simulated search results
+   * Initialize a collection in Weaviate
    */
-  private async simulateVectorSearch(
-    query: string, 
-    collection: string,
-    topK: number,
-    similarityThreshold: number,
-    filters: Record<string, any>
-  ): Promise<VectorSearchResult[]> {
-    // Simulate response delay
-    await new Promise(resolve => setTimeout(resolve, 100));
-    
-    // Sample results based on the query
-    const sampleResults: VectorSearchResult[] = [
-      {
-        id: '1',
-        content: `Document related to: ${query}`,
-        metadata: { source: 'knowledge-base', collection },
-        score: 0.95
-      },
-      {
-        id: '2',
-        content: `Another relevant document about ${query}`,
-        metadata: { source: 'web', collection },
-        score: 0.87
-      },
-      {
-        id: '3',
-        content: `Some information about ${query} and related topics`,
-        metadata: { source: 'internal', collection },
-        score: 0.82
-      },
-      {
-        id: '4',
-        content: `Partially relevant information connected to ${query}`,
-        metadata: { source: 'knowledge-base', collection },
-        score: 0.75
-      },
-      {
-        id: '5',
-        content: `Somewhat related content mentioning ${query} briefly`,
-        metadata: { source: 'conversation', collection },
-        score: 0.68
+  async initializeCollection(collectionName: string = this.defaultCollection): Promise<void> {
+    try {
+      // Check if collection exists
+      const schema = await this.client.schema.getter().do();
+      const exists = schema.classes?.some(c => c.class === collectionName);
+
+      if (!exists) {
+        // Create the collection with appropriate schema
+        await this.client.schema
+          .classCreator()
+          .withClass({
+            class: collectionName,
+            description: 'Collection for vector search documents',
+            vectorizer: 'text2vec-transformers',
+            properties: [
+              {
+                name: 'content',
+                dataType: ['text'],
+                description: 'The main content of the document',
+              },
+              {
+                name: 'metadata',
+                dataType: ['object'],
+                description: 'Additional metadata about the document',
+              }
+            ],
+          })
+          .do();
+
+        console.log(`Created collection: ${collectionName}`);
       }
-    ];
-    
-    // Apply similarity threshold filter
-    let results = sampleResults.filter(result => result.score >= similarityThreshold);
-    
-    // Apply metadata filters if any
-    if (Object.keys(filters).length > 0) {
-      results = results.filter(result => {
-        if (!result.metadata) return false;
-        
-        // Check if all filter conditions match
-        return Object.entries(filters).every(([key, value]) => {
-          return result.metadata?.[key] === value;
-        });
-      });
+    } catch (error) {
+      console.error(`Error initializing collection: ${error}`);
+      throw error;
     }
-    
-    // Return top K results
-    return results.slice(0, topK);
+  }
+
+  /**
+   * Add documents to the vector store
+   */
+  async addDocuments(documents: { content: string; metadata?: Record<string, any> }[], collection: string = this.defaultCollection): Promise<void> {
+    try {
+      // Ensure collection exists
+      await this.initializeCollection(collection);
+
+      // Add documents in batches
+      const batchSize = 100;
+      for (let i = 0; i < documents.length; i += batchSize) {
+        const batch = documents.slice(i, i + batchSize);
+        
+        const batcher = this.client.batch.objectsBatcher();
+        batch.forEach(doc => {
+          batcher.withObject({
+            class: collection,
+            properties: {
+              content: doc.content,
+              metadata: doc.metadata || {}
+            }
+          });
+        });
+
+        await batcher.do();
+      }
+
+      console.log(`Added ${documents.length} documents to collection: ${collection}`);
+    } catch (error) {
+      console.error(`Error adding documents: ${error}`);
+      throw error;
+    }
   }
 }
