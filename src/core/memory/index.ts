@@ -24,9 +24,18 @@ export class MemorySystem {
   shortTerm: ShortTermMemory;
   longTerm: LongTermMemory;
   
-  constructor() {
+  constructor(config = {
+    useChroma: false,
+    chromaConfig: {
+      serviceUrl: 'http://localhost:8000',
+      collectionName: 'agent_nexus_memory'
+    }
+  }) {
     this.shortTerm = new ShortTermMemory();
-    this.longTerm = new LongTermMemory();
+    this.longTerm = new LongTermMemory({
+      useChroma: config.useChroma,
+      chromaConfig: config.chromaConfig
+    });
   }
   
   /**
@@ -40,18 +49,30 @@ export class MemorySystem {
     // Convert simple data to memory entry if needed
     const entry: MemoryEntry = this.normalizeEntry(data);
     
-    // Use Promise.all to store in both memory systems concurrently if needed
+    // Generate a unique ID if not present
+    if (!entry.id) {
+      entry.id = `mem_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    }
+    
+    // Create an array to hold all promises
     const promises: Promise<void>[] = [];
     
+    // Store in short-term memory if needed
     if (memoryType === 'short' || memoryType === 'both') {
       this.shortTerm.store(entry);
     }
     
+    // Store in long-term memory if needed
     if (memoryType === 'long' || memoryType === 'both') {
-      promises.push(this.longTerm.store(entry));
+      // Long-term storage is async, so we need to add it to promises
+      const longTermPromise = this.longTerm.store(entry);
+      promises.push(longTermPromise);
     }
     
-    await Promise.all(promises);
+    // Wait for all async operations to complete
+    if (promises.length > 0) {
+      await Promise.all(promises);
+    }
   }
   
   /**
@@ -63,23 +84,25 @@ export class MemorySystem {
    */
   async retrieve(query: string, memoryType: MemoryType = 'both'): Promise<MemoryEntry[]> {
     const results: MemoryEntry[] = [];
-    
     const promises: Promise<void>[] = [];
     
+    // Retrieve from short-term memory if needed
     if (memoryType === 'short' || memoryType === 'both') {
-      const shortTermPromise = this.shortTerm.retrieve(query).then(shortTermResults => {
-        results.push(...shortTermResults);
+      const shortTermPromise = this.shortTerm.retrieve(query).then(entries => {
+        results.push(...entries);
       });
       promises.push(shortTermPromise);
     }
     
+    // Retrieve from long-term memory if needed
     if (memoryType === 'long' || memoryType === 'both') {
-      const longTermPromise = this.longTerm.retrieve(query).then(longTermResults => {
-        results.push(...longTermResults);
+      const longTermPromise = this.longTerm.retrieve(query).then(entries => {
+        results.push(...entries);
       });
       promises.push(longTermPromise);
     }
     
+    // Wait for all async operations to complete
     await Promise.all(promises);
     
     return results;
