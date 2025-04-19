@@ -25,6 +25,7 @@ export interface AgentConfig {
   modelName?: string;
   agentName?: string;
   description?: string;
+  apiKey?: string;
 }
 
 export class AgentNexus {
@@ -37,6 +38,7 @@ export class AgentNexus {
   private modelName: string;
   private agentName: string;
   private description: string;
+  private apiKey?: string;
 
   constructor(config: AgentConfig = {}) {
     // Get model provider
@@ -46,6 +48,12 @@ export class AgentNexus {
       this.modelProvider = config.modelProvider;
     } else {
       this.modelProvider = modelManager.getProvider();
+    }
+    
+    // Store API key if provided
+    if (config.apiKey) {
+      // This can be used for any API calls that need authentication
+      this.apiKey = config.apiKey;
     }
     
     // Set model name (use provider's default if not specified)

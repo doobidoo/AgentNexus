@@ -1,0 +1,82 @@
+[
+  {
+    "content": "Agent Nexus is a cognitive agent architecture that enables AI systems to reason and solve complex problems.",
+    "metadata": {
+      "source": "documentation",
+      "category": "architecture",
+      "date": "2025-01-15"
+    }
+  },
+  {
+    "content": "The memory system is divided into short-term and long-term components, allowing the agent to maintain context across interactions.",
+    "metadata": {
+      "source": "documentation",
+      "category": "memory",
+      "date": "2025-01-16"
+    }
+  },
+  {
+    "content": "Tools in Agent Nexus are modular components that provide specific capabilities to the cognitive system.",
+    "metadata": {
+      "source": "documentation",
+      "category": "tools",
+      "date": "2025-01-17"
+    }
+  },
+  {
+    "content": "VectorSearch is a tool that enables semantic similarity search using embeddings and vector databases.",
+    "metadata": {
+      "source": "documentation",
+      "category": "tools",
+      "date": "2025-01-18"
+    }
+  },
+  {
+    "content": "The planning system creates structured plans to solve complex tasks and coordinates with the action system.",
+    "metadata": {
+      "source": "documentation",
+      "category": "planning",
+      "date": "2025-01-19"
+    }
+  },
+  {
+    "content": "Weaviate is a vector database that powers semantic search capabilities in Agent Nexus.",
+    "metadata": {
+      "source": "documentation",
+      "category": "integrations",
+      "date": "2025-01-20" 
+    }
+  },
+  {
+    "content": "Environment variables can be configured in .env.local to control various aspects of the system.",
+    "metadata": {
+      "source": "documentation",
+      "category": "configuration",
+      "date": "2025-01-21"
+    }
+  },
+  {
+    "content": "Agent Nexus can be used with different model providers like OpenAI, Anthropic, Google Gemini, and Ollama.",
+    "metadata": {
+      "source": "documentation",
+      "category": "models",
+      "date": "2025-01-22"
+    }
+  },
+  {
+    "content": "The Retrieval Augmented Generation (RAG) pattern enhances text generation by incorporating relevant information from a vector database.",
+    "metadata": {
+      "source": "documentation",
+      "category": "techniques",
+      "date": "2025-01-23"
+    }
+  },
+  {
+    "content": "Unit tests and integration tests ensure the reliability of the Agent Nexus architecture.",
+    "metadata": {
+      "source": "documentation",
+      "category": "testing",
+      "date": "2025-01-24"
+    }
+  }
+]

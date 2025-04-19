@@ -9,7 +9,7 @@ The Agent Nexus architecture consists of four core components:
 1. **Memory**: Divided into short-term (for immediate context) and long-term (for persistent knowledge), allowing the agent to maintain continuity across interactions.
 
 2. **Tools**: A suite of capabilities including:
-   - VectorSearch() - Semantic similarity search
+   - VectorSearch() - Semantic similarity search using vector embeddings
    - TextGeneration() - Context-aware content creation
    - CodeExecutor() - Secure code execution
    - WebBrowser() - Web access and information retrieval
@@ -57,6 +57,7 @@ Benefits of multi-model support:
 - **claude-task-master**: AI-powered task management system
 - **Next.js**: React framework for building the web interface
 - **TypeScript**: For type-safe code
+- **Weaviate**: Vector database for semantic search capabilities
 - **Multiple AI Providers**: OpenAI, Anthropic, Google Gemini, Ollama
 
 ## Getting Started
@@ -89,7 +90,21 @@ Benefits of multi-model support:
    - Add your API keys for the providers you want to use
    - Set your default provider
 
-4. Activate the Agno Python virtual environment:
+4. Set up Weaviate (for vector search capabilities):
+   - Start Weaviate using Docker Compose:
+     ```bash
+     docker-compose up -d weaviate
+     ```
+   - This will launch Weaviate on `localhost:8080`
+   - Verify it's running with: `curl http://localhost:8080/v1/meta`
+   - Configure Weaviate in your `.env.local` file:
+     ```
+     WEAVIATE_HOST=localhost:8080
+     WEAVIATE_SCHEME=http
+     WEAVIATE_API_KEY=  # Optional if you're using authentication
+     ```
+
+5. Activate the Agno Python virtual environment:
    ```bash
    source ./activate-agno.sh
    ```
@@ -109,6 +124,13 @@ Benefits of multi-model support:
    ```
 
 6. Open [http://localhost:3000](http://localhost:3000) in your browser to see the result.
+
+### Documentation
+
+Detailed documentation about specific components and functionality is available in the `/docs` directory:
+
+- [Vector Search Tool](./docs/vector-search.md) - Setting up and using the semantic search capabilities
+- [Retrieval Augmented Generation](./docs/rag.md) - Enhancing LLM responses with relevant context
 
 ## Usage
 
