@@ -217,7 +217,7 @@ export class VectorStore {
         
         if (results && results.ids.length > 0) {
           // Convert to memory entries
-          const entries = results.ids[0].map((id, index) => {
+          const entries = results.ids[0].map((id: string, index: number) => {
             const metadata = results.metadatas[0][index];
             const document = results.documents[0][index];
             const embedding = results.embeddings[0][index];
