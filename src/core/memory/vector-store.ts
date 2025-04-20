@@ -240,10 +240,10 @@ export class VectorStore {
             );
             
             return { entry, score };
-          }).filter(result => result !== null) as Array<{entry: MemoryEntry, score: number}>;
+          }).filter((result: { entry: MemoryEntry; score: number } | null): result is { entry: MemoryEntry; score: number } => result !== null);
           
           // Sort by score (highest first)
-          return entries.sort((a, b) => b.score - a.score);
+          return entries.sort((a: {entry: MemoryEntry; score: number}, b: {entry: MemoryEntry; score: number}): number => b.score - a.score);
         }
         
         // Fall back to in-memory search if no results
