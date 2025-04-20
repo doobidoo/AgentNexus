@@ -41,6 +41,15 @@ const paramsJson = process.argv[3] || '{}';
 const configOption = process.argv[4]; // Optional: 'config' or 'save-config' or 'load-config'
 const configPath = process.argv[5]; // Optional: path for config file
 
+// Initialize params variable early
+let params;
+try {
+  params = JSON.parse(paramsJson);
+} catch (error) {
+  console.error('Error parsing parameters JSON:', error);
+  process.exit(1);
+}
+
 // Define commands and options
 const COMMANDS = {
   CONFIG: 'config',
@@ -135,6 +144,10 @@ if (configOption) {
       // Treat as params if not a known command
       try {
         const extraParams = JSON.parse(configOption);
+        // Make sure params is initialized before using it
+        if (!params) {
+          params = {};
+        }
         params = { ...params, ...extraParams };
       } catch (e) {
         console.error(`Unrecognized option: ${configOption}`);
@@ -160,13 +173,7 @@ if (!TOOLS[toolName]) {
   process.exit(1);
 }
 
-let params;
-try {
-  params = JSON.parse(paramsJson);
-} catch (error) {
-  console.error('Error parsing parameters JSON:', error);
-  process.exit(1);
-}
+// Params have already been parsed above
 
 /**
  * Test a specific tool with provided parameters
