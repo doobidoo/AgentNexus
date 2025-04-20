@@ -1,1 +1,16 @@
- 
+version: '3.8'
+
+services:
+  chromadb:
+    image: chromadb/chroma:latest
+    volumes:
+      - chroma-data:/chroma/chroma
+    ports:
+      - "8000:8000"
+    environment:
+      - ALLOW_RESET=true
+    restart: unless-stopped
+
+volumes:
+  chroma-data:
+    driver: local

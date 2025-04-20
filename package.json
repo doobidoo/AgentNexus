@@ -12,6 +12,7 @@
     "test-agent": "tsx scripts/run-first-task.ts",
     "test-tool": "tsx scripts/test-tool.ts",
     "test-memory": "tsx tests/memory.test.ts",
+    "test-chromadb": "tsx tests/chromadb.test.ts",
     "test-models": "tsx scripts/test-models.ts",
     "test": "npm run test-memory && echo 'All tests completed'",
     "setup": "bash scripts/setup.sh"
@@ -20,6 +21,7 @@
     "@anthropic-ai/sdk": "^0.16.0",
     "@google/generative-ai": "^0.2.0",
     "axios": "^1.6.5",
+    "chromadb": "^1.7.0",
     "claude-task-master": "github:eyaltoledano/claude-task-master",
     "dotenv": "^16.3.1",
     "next": "^14.2.28",

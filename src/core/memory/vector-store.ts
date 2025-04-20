@@ -9,10 +9,16 @@
 import { ModelProvider } from '../models/base';
 import { modelManager } from '../models/factory';
 import { MemoryEntry } from './index';
+import { ChromaClient, ChromaVectorEntry } from './chromadb-client';
 
 export interface VectorStoreConfig {
   dimensions?: number;
   modelProvider?: ModelProvider | string;
+  useChroma?: boolean;
+  chromaConfig?: {
+    serviceUrl: string;
+    collectionName: string;
+  };
 }
 
 export interface VectorEntry {
@@ -27,9 +33,21 @@ export class VectorStore {
   private modelProvider: ModelProvider;
   private initialized: boolean = false;
   private initPromise: Promise<void>;
+  private useChroma: boolean = false;
+  private chromaClient: any = null;
+  private chromaConfig: {
+    serviceUrl: string;
+    collectionName: string;
+  } | null = null;
   
   constructor(config: VectorStoreConfig = {}) {
     this.dimensions = config.dimensions || 1536; // Default is OpenAI embedding size
+    this.useChroma = config.useChroma || false;
+    
+    // Save ChromaDB configuration if provided
+    if (this.useChroma && config.chromaConfig) {
+      this.chromaConfig = config.chromaConfig;
+    }
     
     // Initialize with a placeholder promise that resolves immediately
     this.initPromise = this.initialize(config);
@@ -60,6 +78,29 @@ export class VectorStore {
           // Fall back to default provider
           this.modelProvider = modelManager.getProvider();
           console.warn('No provider with embedding capability found. Using default provider.');
+        }
+      }
+      
+      // Initialize ChromaDB if enabled
+      if (this.useChroma && this.chromaConfig) {
+        try {
+          // Create ChromaDB client
+          this.chromaClient = new ChromaClient({
+            serviceUrl: this.chromaConfig.serviceUrl,
+            collectionName: this.chromaConfig.collectionName
+          });
+          
+          // Initialize client and collection
+          const initialized = await this.chromaClient.initialize();
+          if (!initialized) {
+            console.error('Failed to initialize ChromaDB client, falling back to in-memory storage');
+            this.useChroma = false;
+          } else {
+            console.log('ChromaDB client initialized successfully');
+          }
+        } catch (err) {
+          console.error('Failed to initialize ChromaDB:', err);
+          this.useChroma = false; // Fallback to in-memory storage
         }
       }
       
@@ -100,14 +141,34 @@ export class VectorStore {
       // Create unique ID if not provided
       const id = entry.id || `mem_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
       
-      // Store vector entry
+      // Entry with guaranteed ID
+      const entryWithId = {
+        ...entry,
+        id
+      };
+      
+      // Store in ChromaDB if enabled
+      if (this.useChroma && this.chromaClient) {
+        try {
+          // Convert to ChromaDB entry format
+          const chromaEntry = ChromaClient.memoryEntryToChromaEntry(entryWithId, vector);
+          
+          // Add to ChromaDB
+          const success = await this.chromaClient.addEntries([chromaEntry]);
+          if (!success) {
+            console.warn('Failed to add entry to ChromaDB, falling back to in-memory storage');
+          }
+        } catch (err) {
+          console.error('Failed to add to ChromaDB, falling back to in-memory storage:', err);
+          // Continue with in-memory storage as fallback
+        }
+      }
+      
+      // Always store in-memory (as backup or primary storage)
       this.entries.push({
         id,
         vector,
-        entry: {
-          ...entry,
-          id
-        }
+        entry: entryWithId
       });
       
       return id;
@@ -142,6 +203,58 @@ export class VectorStore {
   async findSimilar(query: string, limit = 5, threshold = 0.7): Promise<Array<{entry: MemoryEntry, score: number}>> {
     await this.ensureInitialized();
     
+    // Check if ChromaDB should be used
+    if (this.useChroma && this.chromaClient) {
+      try {
+        // Generate query embedding
+        const queryVector = await this.generateEmbedding(query);
+        
+        // Query ChromaDB
+        const results = await this.chromaClient.query({
+          queryEmbeddings: [queryVector],
+          nResults: limit
+        });
+        
+        if (results && results.ids.length > 0) {
+          // Convert to memory entries
+          const entries = results.ids[0].map((id, index) => {
+            const metadata = results.metadatas[0][index];
+            const document = results.documents[0][index];
+            const embedding = results.embeddings[0][index];
+            const distance = results.distances[0][index];
+            
+            // Convert distance to similarity score (1 - normalized distance)
+            const score = 1 - Math.min(distance / 2, 1);
+            
+            // Skip entries below threshold
+            if (score < threshold) {
+              return null;
+            }
+            
+            const entry = ChromaClient.chromaEntryToMemoryEntry(
+              id,
+              metadata,
+              document,
+              embedding,
+              distance
+            );
+            
+            return { entry, score };
+          }).filter(result => result !== null) as Array<{entry: MemoryEntry, score: number}>;
+          
+          // Sort by score (highest first)
+          return entries.sort((a, b) => b.score - a.score);
+        }
+        
+        // Fall back to in-memory search if no results
+        console.log('No results from ChromaDB, falling back to in-memory search');
+      } catch (chromaError) {
+        console.error('ChromaDB query failed, falling back to in-memory search:', chromaError);
+        // Continue with in-memory search
+      }
+    }
+    
+    // In-memory search (fallback or primary if ChromaDB not enabled)
     // If no entries, return empty array
     if (this.entries.length === 0) {
       return [];
@@ -179,7 +292,21 @@ export class VectorStore {
    * @param id ID of the entry to remove
    * @returns True if entry was removed, false if not found
    */
-  removeEntry(id: string): boolean {
+  async removeEntry(id: string): Promise<boolean> {
+    await this.ensureInitialized();
+    
+    // Remove from ChromaDB if enabled
+    if (this.useChroma && this.chromaClient) {
+      try {
+        // Delete from ChromaDB
+        await this.chromaClient.deleteEntries([id]);
+      } catch (err) {
+        console.error('Failed to remove from ChromaDB:', err);
+        // Continue with in-memory removal regardless
+      }
+    }
+    
+    // Remove from in-memory storage
     const initialLength = this.entries.length;
     this.entries = this.entries.filter(entry => entry.id !== id);
     return initialLength > this.entries.length;
@@ -197,7 +324,21 @@ export class VectorStore {
   /**
    * Clear all entries from the vector store
    */
-  clear(): void {
+  async clear(): Promise<void> {
+    await this.ensureInitialized();
+    
+    // Clear ChromaDB if enabled
+    if (this.useChroma && this.chromaClient) {
+      try {
+        // Delete and recreate the collection
+        await this.chromaClient.deleteCollection();
+        await this.chromaClient.initialize();
+      } catch (err) {
+        console.error('Failed to clear ChromaDB collection:', err);
+      }
+    }
+    
+    // Clear in-memory storage
     this.entries = [];
   }
   

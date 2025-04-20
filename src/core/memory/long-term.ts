@@ -13,6 +13,11 @@ export interface LongTermMemoryConfig {
   maxEntries?: number;
   persistToLocalStorage?: boolean;
   localStorageKey?: string;
+  useChroma?: boolean;
+  chromaConfig?: {
+    serviceUrl: string;
+    collectionName: string;
+  };
 }
 
 export class LongTermMemory {
@@ -37,7 +42,10 @@ export class LongTermMemory {
     
     // Initialize vector store
     this.vectorStore = new VectorStore({
-      modelProvider: embeddingProvider
+      modelProvider: embeddingProvider,
+      // Pass ChromaDB configuration if enabled
+      useChroma: config.useChroma,
+      chromaConfig: config.chromaConfig
     });
     
     // Initialize with a promise to ensure operations are properly sequenced
@@ -158,7 +166,7 @@ export class LongTermMemory {
     const removed = this.entries.delete(id);
     
     // Remove from vector store
-    this.vectorStore.removeEntry(id);
+    await this.vectorStore.removeEntry(id);
     
     // Save to localStorage if enabled
     if (removed && this.persistToLocalStorage) {
@@ -185,7 +193,7 @@ export class LongTermMemory {
     await this.ensureInitialized();
     
     this.entries.clear();
-    this.vectorStore.clear();
+    await this.vectorStore.clear();
     
     // Clear localStorage if enabled
     if (this.persistToLocalStorage && typeof window !== 'undefined') {
