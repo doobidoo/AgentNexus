@@ -237,6 +237,7 @@ export class ShortTermMemory {
       version: '1.0',
       timestamp: new Date().toISOString(),
       entries: this.entries,
+      // Converting Maps to arrays for ES5 compatibility
       threads: Array.from(this.conversationThreads.entries()),
       accessCounts: Array.from(this.accessCounts.entries()),
       config: {
@@ -406,11 +407,15 @@ export class ShortTermMemory {
       result = `${entry.role}: ${result}`;
     }
     
-    // Add metadata if present
+    // Add metadata if present - ES5 compatible approach
     if (entry.metadata) {
-      result += ' ' + Object.entries(entry.metadata)
-        .map(([key, value]) => `${key}: ${value}`)
-        .join(' ');
+      const metadataPairs = [];
+      for (const key in entry.metadata) {
+        if (Object.prototype.hasOwnProperty.call(entry.metadata, key)) {
+          metadataPairs.push(key + ': ' + entry.metadata[key]);
+        }
+      }
+      result += ' ' + metadataPairs.join(' ');
     }
     
     return result;
