@@ -6,6 +6,7 @@
  */
 
 import { Plan } from '../planning';
+import { SubgoalData } from '../planning/subgoal';
 import { ExecutionResult } from './execution';
 
 export interface FeedbackItem {
@@ -103,7 +104,7 @@ export class Feedback {
    * @param result Result of the subgoal execution
    * @returns Array of feedback items for the subgoal
    */
-  private generateSubgoalFeedback(subgoal: any, result: any): FeedbackItem[] {
+  private generateSubgoalFeedback(subgoal: SubgoalData, result: any): FeedbackItem[] {
     const feedback: FeedbackItem[] = [];
     
     if (result.error) {

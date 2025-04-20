@@ -7,6 +7,7 @@
 
 import { ToolsManager } from '../tools';
 import { Plan } from '../planning';
+import { SubgoalData } from '../planning/subgoal';
 
 export interface ExecutionResult {
   stepsCompleted: number;
@@ -131,7 +132,7 @@ export class Execution {
    * @param toolNames Names of tools that might be useful
    * @returns Result of the subgoal execution
    */
-  private async executeSubgoal(subgoal: any, toolNames: string[]): Promise<any> {
+  private async executeSubgoal(subgoal: SubgoalData, toolNames: string[]): Promise<any> {
     // Simplified implementation
     // In a real system, this would analyze the subgoal, determine the steps,
     // and execute them using the appropriate tools
@@ -226,7 +227,7 @@ export class Execution {
    * @param error The error that occurred
    * @returns Adaptation strategy or null if no adaptation is possible
    */
-  private adaptToError(subgoal: any, error: any): string | null {
+  private adaptToError(subgoal: SubgoalData, error: any): string | null {
     const errorMsg = error instanceof Error ? error.message : String(error);
     
     // Simple adaptation strategies

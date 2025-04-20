@@ -10,12 +10,12 @@ import { ToolsManager } from '../tools';
 import { Reflection } from './reflection';
 import { SelfCritics } from './self-critics';
 import { ChainOfThoughts } from './chain-of-thoughts';
-import { Subgoal } from './subgoal';
+import { Subgoal, SubgoalData } from './subgoal';
 
 export interface Plan {
   id: string;
   objective: string;
-  subgoals: Subgoal[];
+  subgoals: SubgoalData[];
   thoughts: any[];
   reflections: any[];
   criticisms: any[];
