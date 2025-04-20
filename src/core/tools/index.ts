@@ -15,6 +15,7 @@ import { TextGeneration } from './text-generation';
 import { CodeExecutor } from './code-executor';
 import { WebBrowser } from './web-browser';
 import { EventEmitter } from 'events';
+import { configManager, ConfigEventType, ToolConfigSchema } from './config-manager';
 
 // Tool registry type
 export type ToolRegistry = Record<string, BaseTool>;
@@ -38,7 +39,8 @@ export enum ToolEventType {
   UNREGISTERED = 'tool.unregistered',
   EXECUTED = 'tool.executed',
   EXECUTION_FAILED = 'tool.execution.failed',
-  CONFIGURATION_CHANGED = 'tool.configuration.changed'
+  CONFIGURATION_CHANGED = 'tool.configuration.changed',
+  CONFIG_VALIDATION_ERROR = 'tool.configuration.validation.error'
 }
 
 // Tool event structure
@@ -84,7 +86,7 @@ export class ToolsManager extends EventEmitter {
    * @param tool The tool to register
    * @returns boolean indicating if registration was successful
    */
-  registerTool(tool: BaseTool): boolean {
+  registerTool(tool: BaseTool, configSchema?: ToolConfigSchema, defaultConfig?: Record<string, any>): boolean {
     // Validate that the tool implements the required interface
     if (!this.validateToolInterface(tool)) {
       console.error(`Tool validation failed for ${tool.name}`);
@@ -104,6 +106,35 @@ export class ToolsManager extends EventEmitter {
       lastUsed: undefined,
       averageExecutionTime: 0
     };
+    
+    // Register configuration schema if provided
+    if (configSchema) {
+      configManager.registerToolConfig(tool.name, configSchema, defaultConfig);
+      
+      // Listen for configuration validation errors
+      configManager.on(ConfigEventType.CONFIG_VALIDATION_ERROR, (data) => {
+        if (data.toolName === tool.name) {
+          this.emit(ToolEventType.CONFIG_VALIDATION_ERROR, {
+            type: ToolEventType.CONFIG_VALIDATION_ERROR,
+            toolName: tool.name,
+            timestamp: new Date().toISOString(),
+            details: data.errors
+          } as ToolEvent);
+        }
+      });
+      
+      // Listen for configuration updates
+      configManager.on(ConfigEventType.CONFIG_UPDATED, (data) => {
+        if (data.toolName === tool.name) {
+          this.emit(ToolEventType.CONFIGURATION_CHANGED, {
+            type: ToolEventType.CONFIGURATION_CHANGED,
+            toolName: tool.name,
+            timestamp: new Date().toISOString(),
+            details: data
+          } as ToolEvent);
+        }
+      });
+    }
     
     // Emit registration event
     this.emit(ToolEventType.REGISTERED, {
@@ -128,6 +159,11 @@ export class ToolsManager extends EventEmitter {
       const metadata = this.toolMetadata[toolName];
       delete this.tools[toolName];
       delete this.toolMetadata[toolName];
+      
+      // Reset tool configuration if exists
+      if (configManager.getToolConfigSchema(toolName)) {
+        configManager.resetToolConfig(toolName);
+      }
       
       // Emit unregistration event
       this.emit(ToolEventType.UNREGISTERED, {
@@ -199,12 +235,18 @@ export class ToolsManager extends EventEmitter {
       throw new Error(`Tool not found: ${toolName}`);
     }
     
+    // Get tool configuration if available
+    const toolConfig = configManager.getToolConfig(toolName);
+    
     // Record execution start time for metadata update
     const startTime = Date.now();
     
     try {
+      // Merge params with configuration if not explicitly provided in params
+      const mergedParams = { ...toolConfig, ...params };
+      
       // Use the execution framework to execute the tool
-      const result = await this.executionFramework.execute(tool, params, context, options);
+      const result = await this.executionFramework.execute(tool, mergedParams, context, options);
       
       // Update tool metadata
       this.updateToolExecutionMetrics(toolName, Date.now() - startTime, result.success);
@@ -464,12 +506,214 @@ export class ToolsManager extends EventEmitter {
   /**
    * Register default tools with the manager
    */
+  /**
+   * Get tool configuration
+   * 
+   * @param toolName Name of the tool
+   * @returns Configuration object for the tool
+   */
+  getToolConfig(toolName: string): Record<string, any> {
+    return configManager.getToolConfig(toolName);
+  }
+  
+  /**
+   * Set tool configuration
+   * 
+   * @param toolName Name of the tool
+   * @param config Configuration object to set
+   * @returns Boolean indicating if configuration was successfully applied
+   */
+  setToolConfig(toolName: string, config: Record<string, any>): boolean {
+    // Check if the tool exists
+    if (!this.tools[toolName]) {
+      console.error(`Tool not found: ${toolName}`);
+      return false;
+    }
+    
+    // Update the configuration
+    return configManager.updateToolConfig(toolName, config);
+  }
+  
+  /**
+   * Reset tool configuration to defaults
+   * 
+   * @param toolName Name of the tool
+   * @returns Boolean indicating if reset was successful
+   */
+  resetToolConfig(toolName: string): boolean {
+    // Check if the tool exists
+    if (!this.tools[toolName]) {
+      console.error(`Tool not found: ${toolName}`);
+      return false;
+    }
+    
+    // Reset the configuration
+    return configManager.resetToolConfig(toolName);
+  }
+  
+  /**
+   * Get configuration validation errors for a tool
+   * 
+   * @param toolName Name of the tool
+   * @returns Array of validation errors
+   */
+  getToolConfigValidationErrors(toolName: string): any[] {
+    return configManager.getValidationErrors(toolName);
+  }
+  
+  /**
+   * Generate configuration documentation for a tool
+   * 
+   * @param toolName Name of the tool
+   * @returns Formatted documentation string
+   */
+  getToolConfigDocumentation(toolName: string): string {
+    return configManager.generateConfigDocumentation(toolName);
+  }
+  
+  /**
+   * Save all tool configurations to a file
+   * 
+   * @param filePath Path to save configuration file
+   * @returns Boolean indicating if save was successful
+   */
+  saveToolConfigurations(filePath?: string): boolean {
+    return configManager.saveConfigToFile(filePath);
+  }
+  
+  /**
+   * Load tool configurations from a file
+   * 
+   * @param filePath Path to load configuration file from
+   * @returns Boolean indicating if load was successful
+   */
+  loadToolConfigurations(filePath: string): boolean {
+    return configManager.loadConfigFromFile(filePath);
+  }
+  
   private registerDefaultTools(): void {
-    // Register all default tools
-    this.registerTool(new VectorSearch());
-    this.registerTool(new TextGeneration());
-    this.registerTool(new CodeExecutor());
-    this.registerTool(new WebBrowser());
+    // Register all default tools with their configuration schemas
+    
+    // VectorSearch configuration
+    this.registerTool(new VectorSearch(), {
+      properties: {
+        indexName: {
+          type: 'string',
+          description: 'Name of the vector index to search',
+          default: 'default'
+        },
+        similarityThreshold: {
+          type: 'number',
+          description: 'Minimum similarity score (0.0 to 1.0) for results',
+          default: 0.7
+        },
+        maxResults: {
+          type: 'number',
+          description: 'Maximum number of results to return',
+          default: 10
+        },
+        includeMetadata: {
+          type: 'boolean',
+          description: 'Whether to include metadata in results',
+          default: true
+        },
+        model: {
+          type: 'string',
+          description: 'Embedding model to use',
+          default: 'text-embedding-ada-002'
+        }
+      },
+      required: ['indexName']
+    });
+    
+    // TextGeneration configuration
+    this.registerTool(new TextGeneration(), {
+      properties: {
+        model: {
+          type: 'string',
+          description: 'LLM model to use for generation',
+          default: 'gpt-4'
+        },
+        temperature: {
+          type: 'number',
+          description: 'Temperature for generation (0.0 to 1.0)',
+          default: 0.7
+        },
+        maxTokens: {
+          type: 'number',
+          description: 'Maximum number of tokens to generate',
+          default: 1000
+        },
+        topP: {
+          type: 'number',
+          description: 'Top-p sampling parameter',
+          default: 1.0
+        },
+        stopSequences: {
+          type: 'array',
+          description: 'Sequences that will stop generation',
+          default: []
+        }
+      },
+      required: ['model']
+    });
+    
+    // CodeExecutor configuration
+    this.registerTool(new CodeExecutor(), {
+      properties: {
+        timeout: {
+          type: 'number',
+          description: 'Execution timeout in milliseconds',
+          default: 5000
+        },
+        maxMemoryMB: {
+          type: 'number',
+          description: 'Maximum memory usage in MB',
+          default: 512
+        },
+        allowedLanguages: {
+          type: 'array',
+          description: 'List of allowed languages to execute',
+          default: ['javascript', 'python', 'typescript']
+        },
+        securitySandboxing: {
+          type: 'boolean',
+          description: 'Whether to use security sandboxing',
+          default: true
+        }
+      }
+    });
+    
+    // WebBrowser configuration
+    this.registerTool(new WebBrowser(), {
+      properties: {
+        timeout: {
+          type: 'number',
+          description: 'Request timeout in milliseconds',
+          default: 10000
+        },
+        userAgent: {
+          type: 'string',
+          description: 'User agent string for requests',
+          default: 'Mozilla/5.0 AgentNexus/1.0'
+        },
+        maxContentSizeKB: {
+          type: 'number',
+          description: 'Maximum content size in KB',
+          default: 5120
+        },
+        followRedirects: {
+          type: 'boolean',
+          description: 'Whether to follow redirects',
+          default: true
+        },
+        maxRedirects: {
+          type: 'number',
+          description: 'Maximum number of redirects to follow',
+          default: 5
+        }
+      }
+    });
     
     // Note: Additional tools will be registered as they are implemented
   }

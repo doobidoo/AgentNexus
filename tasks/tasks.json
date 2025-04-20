@@ -22,7 +22,7 @@
 5. Create docs/ directory with initial documentation structure (architecture.md, setup.md, contributing.md)\
 6. Add CHANGELOG.md and CODE_OF_CONDUCT.md files\
 7. Test by ensuring all files are properly committed and visible on GitHub",
-          "status": "pending",
+          "status": "completed",
           "parentTaskId": 1
         },
         {
@@ -384,7 +384,7 @@ Testing approach:\
 6. Create a configuration documentation generator\
 7. Test with different configuration scenarios\
 8. Ensure configuration changes are properly propagated to tool instances",
-          "status": "pending",
+          "status": "completed",
           "parentTaskId": 4
         },
         {
