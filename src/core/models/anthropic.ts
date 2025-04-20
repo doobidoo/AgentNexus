@@ -144,7 +144,8 @@ export class AnthropicProvider extends BaseModelProvider {
    * @param options Embedding options
    * @returns Vector embeddings
    */
-  async generateEmbeddings(text: string | string[], _options?: EmbeddingOptions): Promise<number[] | number[][]> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async generateEmbeddings(text: string | string[], options?: EmbeddingOptions): Promise<number[] | number[][]> {
     throw new Error('Embedding generation is not supported by Anthropic API');
   }
 }

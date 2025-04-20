@@ -8,6 +8,8 @@
 
 import React, { useState, useEffect } from 'react';
 
+// Keep interface for future use but mark as unused
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface ModelInfo {
   provider: string;
   model: string;

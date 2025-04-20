@@ -27,7 +27,7 @@ function getAgent() {
   return agentInstance;
 }
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     // Get or initialize the agent
     const agent = getAgent();

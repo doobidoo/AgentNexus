@@ -5,7 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { modelManager } from '@/core/models/factory';
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     // Get the list of available providers
     const providers = modelManager.listProviders();

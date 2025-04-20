@@ -282,6 +282,7 @@ export class ChromaClient {
         if (parsed && typeof parsed === 'object') {
           content = parsed;
         }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (_) {
         // If parsing fails, keep as string
         content = document;

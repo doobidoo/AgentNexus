@@ -48,11 +48,14 @@ export class Execution {
     const startTime = new Date().toISOString();
     const startTimestamp = Date.now();
     
+    // Extract options with original names but mark as unused with eslint-disable
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const {
-      // Keep these but mark them as unused with underscore prefix
-      _maxConcurrentSteps = 1,
-      _timeoutMs = 30000,
-      _retryCount = 1,
+      maxConcurrentSteps = 1,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      timeoutMs = 30000,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      retryCount = 1,
       continueOnError = false
     } = options;
     
