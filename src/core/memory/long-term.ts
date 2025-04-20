@@ -304,7 +304,11 @@ export class LongTermMemory {
     const queryLower = query.toLowerCase();
     const matches: MemoryEntry[] = [];
     
-    for (const entry of this.entries.values()) {
+    // Convert iterator to array for ES5 compatibility
+    const entriesArray = Array.from(this.entries.values());
+    
+    for (let i = 0; i < entriesArray.length; i++) {
+      const entry = entriesArray[i];
       let contentString = '';
       
       if (typeof entry.content === 'string') {
