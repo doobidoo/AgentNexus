@@ -145,7 +145,7 @@ async function processTask(task: Task): Promise<string> {
     
     const agent = new AgentNexus({
       apiKey,
-      name: "Agent Nexus",
+      agentName: "Agent Nexus",
       description: "An advanced cognitive agent architecture for software development"
     });
     
