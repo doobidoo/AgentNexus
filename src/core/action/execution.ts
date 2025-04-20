@@ -49,9 +49,10 @@ export class Execution {
     const startTimestamp = Date.now();
     
     const {
-      maxConcurrentSteps = 1,
-      timeoutMs = 30000,
-      retryCount = 1,
+      // Keep these but mark them as unused with underscore prefix
+      _maxConcurrentSteps = 1,
+      _timeoutMs = 30000,
+      _retryCount = 1,
       continueOnError = false
     } = options;
     

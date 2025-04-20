@@ -330,8 +330,8 @@ export class Feedback {
     
     // Extract patterns that appear in multiple strings
     return Object.entries(patterns)
-      .filter(([_, count]) => count > 1)
-      .map(([pattern, _]) => pattern)
+      .filter(([, count]) => count > 1)
+      .map(([pattern]) => pattern)
       .slice(0, 3); // Limit to top 3 patterns
   }
 }

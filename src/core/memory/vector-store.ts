@@ -9,7 +9,7 @@
 import { ModelProvider } from '../models/base';
 import { modelManager } from '../models/factory';
 import { MemoryEntry } from './index';
-import { ChromaClient, ChromaVectorEntry } from './chromadb-client';
+import { ChromaClient } from './chromadb-client';
 
 export interface VectorStoreConfig {
   dimensions?: number;
@@ -30,7 +30,7 @@ export interface VectorEntry {
 export class VectorStore {
   private entries: VectorEntry[] = [];
   private dimensions: number;
-  private modelProvider: ModelProvider;
+  private modelProvider!: ModelProvider; // Using definite assignment assertion
   private initialized: boolean = false;
   private initPromise: Promise<void>;
   private useChroma: boolean = false;

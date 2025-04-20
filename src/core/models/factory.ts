@@ -6,11 +6,10 @@
  */
 
 import dotenv from 'dotenv';
-import { ModelManager, createModelProvider, ModelProviderType } from './index';
+import { ModelManager, createModelProvider } from './index';
 
 // Override dotenv in Next.js environment
 console.log('Initializing model providers...');
-let envVars = {};
 try {
   // In browser/server environment, we rely on .env.local being loaded by Next.js
   if (process.env.ANTHROPIC_API_KEY) {
@@ -23,7 +22,6 @@ try {
       console.warn('Error loading .env.local:', result.error);
     } else {
       console.log('.env.local loaded successfully');
-      envVars = result.parsed || {};
     }
   }
 } catch (error) {

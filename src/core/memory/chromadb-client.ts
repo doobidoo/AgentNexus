@@ -282,7 +282,7 @@ export class ChromaClient {
         if (parsed && typeof parsed === 'object') {
           content = parsed;
         }
-      } catch (e) {
+      } catch (_) {
         // If parsing fails, keep as string
         content = document;
       }

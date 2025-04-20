@@ -4,7 +4,7 @@
  * Implementation of the model provider interface for Google's Gemini models
  */
 
-import { GoogleGenerativeAI, GenerativeModel, EmbeddingModel } from '@google/generative-ai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { BaseModelProvider, ModelMessage, CompletionOptions, EmbeddingOptions, ModelProviderInfo } from './base';
 
 export class GeminiProvider extends BaseModelProvider {
