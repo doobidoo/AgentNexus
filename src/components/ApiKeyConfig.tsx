@@ -27,6 +27,15 @@ export default function ApiKeyConfig({ onConfigChange }: ApiKeyConfigProps) {
     gemini: false,
   });
   
+  // Update list of valid providers
+  const updateValidProviders = useCallback(() => {
+    const providers = apiKeyManager.getValidProviders();
+    setValidProviders(providers);
+    if (onConfigChange) {
+      onConfigChange(providers);
+    }
+  }, [onConfigChange]);
+  
   // Load existing keys on mount
   useEffect(() => {
     const loadedKeys: Record<string, string> = {
@@ -38,15 +47,6 @@ export default function ApiKeyConfig({ onConfigChange }: ApiKeyConfigProps) {
     setKeys(loadedKeys);
     updateValidProviders();
   }, [updateValidProviders]);
-  
-  // Update list of valid providers
-  const updateValidProviders = useCallback(() => {
-    const providers = apiKeyManager.getValidProviders();
-    setValidProviders(providers);
-    if (onConfigChange) {
-      onConfigChange(providers);
-    }
-  }, [onConfigChange]);
   
   // Handle key changes
   const handleKeyChange = (provider: string, value: string) => {
