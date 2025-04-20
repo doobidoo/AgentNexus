@@ -20,7 +20,11 @@ export interface CompletionOptions {
   presencePenalty?: number;
   stop?: string[];
   tools?: any[];
-  responseFormat?: any;
+  responseFormat?: {
+    model?: string;
+    type?: string;
+    [key: string]: any;
+  };
 }
 
 export interface EmbeddingOptions {

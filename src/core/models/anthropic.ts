@@ -85,10 +85,12 @@ export class AnthropicProvider extends BaseModelProvider {
         throw new Error('Anthropic API key is not configured');
       }
       
-      console.log(`[Anthropic] Generating completion with model: ${options?.responseFormat?.model || this.info.defaultCompletionModel}`);
+      // Determine which model to use (from responseFormat.model or default)
+      const modelToUse = options?.responseFormat?.model || this.info.defaultCompletionModel;
+      console.log(`[Anthropic] Generating completion with model: ${modelToUse}`);
       
       const completionOptions: any = {
-        model: options?.responseFormat?.model || this.info.defaultCompletionModel,
+        model: modelToUse,
         messages: convertedMessages,
         system: systemPrompt,
         temperature: options?.temperature,

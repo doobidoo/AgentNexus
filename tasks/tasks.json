@@ -1,6 +1,17 @@
 {
   "tasks": [
     {
+      "id": 6,
+      "title": "Fix Type Error in CompletionOptions Interface",
+      "description": "Fix the type error where 'model' property was incorrectly used in the CompletionOptions interface.",
+      "status": "completed",
+      "dependencies": [],
+      "priority": "high",
+      "details": "Fixed the type error in agent.ts where 'model' property was being used in CompletionOptions interface. Modified agent.ts to use 'responseFormat: { model: this.modelName }' instead of 'model: this.modelName'. Enhanced the CompletionOptions interface to have a more specific definition for responseFormat. Improved how model providers handle the responseFormat parameter for better consistency.",
+      "testStrategy": "Verify the build succeeds without type errors. Ensure chat functionality still works correctly with all model providers.",
+      "subtasks": []
+    },
+    {
       "id": 1,
       "title": "Setup Project Repository and Base Architecture",
       "description": "Initialize the project repository with the modular architecture structure for Agent Nexus, including component separation for memory, tools, planning, and action systems.",

@@ -149,7 +149,7 @@ export class AgentNexus {
       const response = await this.modelProvider.generateCompletion(messages, {
         temperature: 0.7,
         maxTokens: 1000,
-        model: this.modelName
+        responseFormat: { model: this.modelName }
       });
       
       console.log(`[Agent] Got response of length: ${response?.length || 0}`);

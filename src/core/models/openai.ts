@@ -38,8 +38,12 @@ export class OpenAIProvider extends BaseModelProvider {
    */
   async generateCompletion(messages: ModelMessage[], options?: CompletionOptions): Promise<string> {
     try {
+      // Determine which model to use (from responseFormat.model or default)
+      const modelToUse = options?.responseFormat?.model || this.info.defaultCompletionModel;
+      console.log(`[OpenAI] Generating completion with model: ${modelToUse}`);
+      
       const completionOptions: any = {
-        model: options?.responseFormat?.model || this.info.defaultCompletionModel,
+        model: modelToUse,
         messages: messages,
         temperature: options?.temperature,
         max_tokens: options?.maxTokens,
@@ -54,9 +58,14 @@ export class OpenAIProvider extends BaseModelProvider {
         completionOptions.tools = options.tools;
       }
       
-      // Add response format if specified
-      if (options?.responseFormat) {
-        completionOptions.response_format = options.responseFormat;
+      // Handle responseFormat.model and responseFormat.type separately
+      if (options?.responseFormat?.model) {
+        // Model already set above from responseFormat.model
+      }
+      
+      // Set response_format if type is specified (json or text)
+      if (options?.responseFormat?.type) {
+        completionOptions.response_format = { type: options.responseFormat.type };
       }
       
       const response = await this.client.chat.completions.create(completionOptions);
