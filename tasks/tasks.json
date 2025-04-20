@@ -15,7 +15,13 @@
           "title": "Initialize Repository with License and Basic Structure",
           "description": "Create the GitHub repository with appropriate licensing and set up the basic project structure with README, .gitignore, and initial documentation files.",
           "dependencies": [],
-          "details": "1. Create a new GitHub repository named 'agent-nexus'\n2. Add MIT or Apache 2.0 license based on project requirements\n3. Create README.md with project overview, goals, and basic setup instructions\n4. Add .gitignore file for Python, Docker, and common development environments\n5. Create docs/ directory with initial documentation structure (architecture.md, setup.md, contributing.md)\n6. Add CHANGELOG.md and CODE_OF_CONDUCT.md files\n7. Test by ensuring all files are properly committed and visible on GitHub",
+          "details": "1. Create a new GitHub repository named 'agent-nexus'\
+2. Add MIT or Apache 2.0 license based on project requirements\
+3. Create README.md with project overview, goals, and basic setup instructions\
+4. Add .gitignore file for Python, Docker, and common development environments\
+5. Create docs/ directory with initial documentation structure (architecture.md, setup.md, contributing.md)\
+6. Add CHANGELOG.md and CODE_OF_CONDUCT.md files\
+7. Test by ensuring all files are properly committed and visible on GitHub",
           "status": "pending",
           "parentTaskId": 1
         },
@@ -26,7 +32,14 @@
           "dependencies": [
             1
           ],
-          "details": "1. Initialize Poetry project with `poetry init`\n2. Configure pyproject.toml with appropriate metadata and Python version requirements\n3. Create src/agent_nexus/ directory for main package code\n4. Add core dependencies (pyyaml, pydantic, etc.) to pyproject.toml\n5. Add development dependencies (pytest, black, isort, mypy, etc.)\n6. Create tests/ directory with pytest configuration\n7. Setup pre-commit hooks for code quality\n8. Test by running `poetry install` and verifying the environment is created correctly",
+          "details": "1. Initialize Poetry project with `poetry init`\
+2. Configure pyproject.toml with appropriate metadata and Python version requirements\
+3. Create src/agent_nexus/ directory for main package code\
+4. Add core dependencies (pyyaml, pydantic, etc.) to pyproject.toml\
+5. Add development dependencies (pytest, black, isort, mypy, etc.)\
+6. Create tests/ directory with pytest configuration\
+7. Setup pre-commit hooks for code quality\
+8. Test by running `poetry install` and verifying the environment is created correctly",
           "status": "pending",
           "parentTaskId": 1
         },
@@ -37,7 +50,20 @@
           "dependencies": [
             2
           ],
-          "details": "1. Create directories for each core component:\n   - src/agent_nexus/memory/\n   - src/agent_nexus/tools/\n   - src/agent_nexus/planning/\n   - src/agent_nexus/action/\n   - src/agent_nexus/core/\n2. Add __init__.py files to each directory to make them proper packages\n3. Create base interface classes for each component in their respective directories:\n   - memory/base.py with BaseMemory interface\n   - tools/base.py with BaseTool interface\n   - planning/base.py with BasePlanner interface\n   - action/base.py with BaseAction interface\n4. Define core exceptions in core/exceptions.py\n5. Test by importing each base interface in a test file",
+          "details": "1. Create directories for each core component:\
+   - src/agent_nexus/memory/\
+   - src/agent_nexus/tools/\
+   - src/agent_nexus/planning/\
+   - src/agent_nexus/action/\
+   - src/agent_nexus/core/\
+2. Add __init__.py files to each directory to make them proper packages\
+3. Create base interface classes for each component in their respective directories:\
+   - memory/base.py with BaseMemory interface\
+   - tools/base.py with BaseTool interface\
+   - planning/base.py with BasePlanner interface\
+   - action/base.py with BaseAction interface\
+4. Define core exceptions in core/exceptions.py\
+5. Test by importing each base interface in a test file",
           "status": "pending",
           "parentTaskId": 1
         },
@@ -48,7 +74,14 @@
           "dependencies": [
             2
           ],
-          "details": "1. Create src/agent_nexus/core/config.py module\n2. Define ConfigLoader class that loads YAML files\n3. Create Pydantic models for configuration validation in core/schemas.py\n4. Implement configuration merging logic for overriding defaults\n5. Add support for environment variable substitution in config files\n6. Create default configuration files in config/ directory\n7. Write unit tests for configuration loading and validation\n8. Test by loading sample configurations and validating against schemas",
+          "details": "1. Create src/agent_nexus/core/config.py module\
+2. Define ConfigLoader class that loads YAML files\
+3. Create Pydantic models for configuration validation in core/schemas.py\
+4. Implement configuration merging logic for overriding defaults\
+5. Add support for environment variable substitution in config files\
+6. Create default configuration files in config/ directory\
+7. Write unit tests for configuration loading and validation\
+8. Test by loading sample configurations and validating against schemas",
           "status": "pending",
           "parentTaskId": 1
         },
@@ -59,7 +92,15 @@
           "dependencies": [
             3
           ],
-          "details": "1. Create src/agent_nexus/core/events.py module\n2. Define Event base class and common event types\n3. Implement EventBus class with publish/subscribe methods\n4. Add support for event filtering and prioritization\n5. Create decorators for event handlers\n6. Implement both sync and async event processing\n7. Add logging for event debugging\n8. Write unit tests for event publishing and subscription\n9. Test by creating sample events and verifying they're properly routed between components",
+          "details": "1. Create src/agent_nexus/core/events.py module\
+2. Define Event base class and common event types\
+3. Implement EventBus class with publish/subscribe methods\
+4. Add support for event filtering and prioritization\
+5. Create decorators for event handlers\
+6. Implement both sync and async event processing\
+7. Add logging for event debugging\
+8. Write unit tests for event publishing and subscription\
+9. Test by creating sample events and verifying they're properly routed between components",
           "status": "pending",
           "parentTaskId": 1
         },
@@ -72,7 +113,14 @@
             4,
             5
           ],
-          "details": "1. Create src/agent_nexus/core/registry.py module\n2. Implement ComponentRegistry class for registering and retrieving components\n3. Add dependency resolution for components that depend on each other\n4. Implement lifecycle hooks (init, start, stop) for components\n5. Create factory functions for component instantiation based on configuration\n6. Add validation to ensure required components are registered\n7. Write unit tests for component registration and lifecycle management\n8. Test by registering mock components and verifying proper initialization order",
+          "details": "1. Create src/agent_nexus/core/registry.py module\
+2. Implement ComponentRegistry class for registering and retrieving components\
+3. Add dependency resolution for components that depend on each other\
+4. Implement lifecycle hooks (init, start, stop) for components\
+5. Create factory functions for component instantiation based on configuration\
+6. Add validation to ensure required components are registered\
+7. Write unit tests for component registration and lifecycle management\
+8. Test by registering mock components and verifying proper initialization order",
           "status": "pending",
           "parentTaskId": 1
         },
@@ -84,7 +132,14 @@
             2,
             4
           ],
-          "details": "1. Create Dockerfile with multi-stage build (development and production stages)\n2. Implement docker-compose.yml for local development\n3. Add volume mounts for code and configuration\n4. Configure appropriate environment variables\n5. Setup health checks for containers\n6. Add Docker-specific documentation in docs/docker.md\n7. Create .dockerignore file to exclude unnecessary files\n8. Test by building the Docker image and running a container with basic configuration",
+          "details": "1. Create Dockerfile with multi-stage build (development and production stages)\
+2. Implement docker-compose.yml for local development\
+3. Add volume mounts for code and configuration\
+4. Configure appropriate environment variables\
+5. Setup health checks for containers\
+6. Add Docker-specific documentation in docs/docker.md\
+7. Create .dockerignore file to exclude unnecessary files\
+8. Test by building the Docker image and running a container with basic configuration",
           "status": "pending",
           "parentTaskId": 1
         },
@@ -97,7 +152,15 @@
             5,
             6
           ],
-          "details": "1. Create src/agent_nexus/cli.py module\n2. Implement CLI using Click or Typer library\n3. Add commands for starting the system, running components individually, and managing configuration\n4. Create src/agent_nexus/app.py as the main application entry point\n5. Implement Application class that initializes all components based on configuration\n6. Add graceful shutdown handling\n7. Setup proper logging configuration\n8. Create executable script entry points in pyproject.toml\n9. Test by running the CLI with various commands and verifying components are initialized correctly",
+          "details": "1. Create src/agent_nexus/cli.py module\
+2. Implement CLI using Click or Typer library\
+3. Add commands for starting the system, running components individually, and managing configuration\
+4. Create src/agent_nexus/app.py as the main application entry point\
+5. Implement Application class that initializes all components based on configuration\
+6. Add graceful shutdown handling\
+7. Setup proper logging configuration\
+8. Create executable script entry points in pyproject.toml\
+9. Test by running the CLI with various commands and verifying components are initialized correctly",
           "status": "pending",
           "parentTaskId": 1
         }
@@ -120,7 +183,17 @@
           "title": "Create ShortTermMemory Class Structure",
           "description": "Design and implement the core ShortTermMemory class with basic data structures and interfaces",
           "dependencies": [],
-          "details": "Implementation details:\n1. Create a ShortTermMemory class with appropriate data structures (e.g., queue, priority queue, or specialized container) to store conversation entries\n2. Define memory entry data structure with fields for content, timestamp, priority, and metadata\n3. Implement constructor with configurable parameters (max_size, default_retention_time)\n4. Create basic interface methods: add_entry(), get_entries(), clear()\n5. Add docstrings and type hints\n\nTesting approach:\n- Unit test the initialization with different parameters\n- Test basic add and retrieve functionality\n- Verify empty state handling",
+          "details": "Implementation details:\
+1. Create a ShortTermMemory class with appropriate data structures (e.g., queue, priority queue, or specialized container) to store conversation entries\
+2. Define memory entry data structure with fields for content, timestamp, priority, and metadata\
+3. Implement constructor with configurable parameters (max_size, default_retention_time)\
+4. Create basic interface methods: add_entry(), get_entries(), clear()\
+5. Add docstrings and type hints\
+\
+Testing approach:\
+- Unit test the initialization with different parameters\
+- Test basic add and retrieve functionality\
+- Verify empty state handling",
           "status": "pending",
           "parentTaskId": 2
         },
@@ -131,7 +204,19 @@
           "dependencies": [
             1
           ],
-          "details": "Implementation details:\n1. Add timestamp tracking for each memory entry\n2. Implement configurable retention parameters (time-based, count-based)\n3. Create prune_old_entries() method to remove entries based on age\n4. Add prune_by_count() method to limit total entries\n5. Implement automatic pruning during add_entry() when thresholds are exceeded\n6. Add memory usage statistics tracking\n\nTesting approach:\n- Test that old entries are correctly pruned based on time\n- Verify count-based pruning works as expected\n- Test edge cases (empty memory, all entries expired)\n- Benchmark memory usage with different retention settings",
+          "details": "Implementation details:\
+1. Add timestamp tracking for each memory entry\
+2. Implement configurable retention parameters (time-based, count-based)\
+3. Create prune_old_entries() method to remove entries based on age\
+4. Add prune_by_count() method to limit total entries\
+5. Implement automatic pruning during add_entry() when thresholds are exceeded\
+6. Add memory usage statistics tracking\
+\
+Testing approach:\
+- Test that old entries are correctly pruned based on time\
+- Verify count-based pruning works as expected\
+- Test edge cases (empty memory, all entries expired)\
+- Benchmark memory usage with different retention settings",
           "status": "pending",
           "parentTaskId": 2
         },
@@ -143,7 +228,19 @@
             1,
             2
           ],
-          "details": "Implementation details:\n1. Design priority scoring system (numerical scale, e.g., 1-10)\n2. Implement methods to assign priorities to memory entries\n3. Create priority-based retrieval functionality (get_entries_by_priority())\n4. Modify pruning logic to consider priority when removing entries\n5. Add priority boosting for frequently accessed entries\n6. Implement priority decay over time for less relevant information\n\nTesting approach:\n- Test that high-priority items are retained longer than low-priority ones\n- Verify priority-based retrieval returns correct entries in proper order\n- Test priority boosting and decay mechanisms\n- Ensure pruning respects priority settings",
+          "details": "Implementation details:\
+1. Design priority scoring system (numerical scale, e.g., 1-10)\
+2. Implement methods to assign priorities to memory entries\
+3. Create priority-based retrieval functionality (get_entries_by_priority())\
+4. Modify pruning logic to consider priority when removing entries\
+5. Add priority boosting for frequently accessed entries\
+6. Implement priority decay over time for less relevant information\
+\
+Testing approach:\
+- Test that high-priority items are retained longer than low-priority ones\
+- Verify priority-based retrieval returns correct entries in proper order\
+- Test priority boosting and decay mechanisms\
+- Ensure pruning respects priority settings",
           "status": "pending",
           "parentTaskId": 2
         },
@@ -155,7 +252,19 @@
             1,
             3
           ],
-          "details": "Implementation details:\n1. Implement conversation thread tracking with unique identifiers\n2. Create methods to retrieve conversation history by thread\n3. Add context window management (sliding window of recent conversation)\n4. Implement relevance scoring for contextual retrieval\n5. Add methods to extract key information from conversation context\n6. Create summarization hooks for long conversations\n\nTesting approach:\n- Test conversation threading with multiple interleaved conversations\n- Verify context window correctly maintains recent conversation\n- Test relevance-based retrieval with sample conversations\n- Ensure context is properly maintained across multiple interactions",
+          "details": "Implementation details:\
+1. Implement conversation thread tracking with unique identifiers\
+2. Create methods to retrieve conversation history by thread\
+3. Add context window management (sliding window of recent conversation)\
+4. Implement relevance scoring for contextual retrieval\
+5. Add methods to extract key information from conversation context\
+6. Create summarization hooks for long conversations\
+\
+Testing approach:\
+- Test conversation threading with multiple interleaved conversations\
+- Verify context window correctly maintains recent conversation\
+- Test relevance-based retrieval with sample conversations\
+- Ensure context is properly maintained across multiple interactions",
           "status": "pending",
           "parentTaskId": 2
         },
@@ -168,7 +277,19 @@
             2,
             3
           ],
-          "details": "Implementation details:\n1. Design serialization format for memory entries (JSON, pickle, or custom format)\n2. Implement save_to_file(path) and load_from_file(path) methods\n3. Add memory state versioning for backward compatibility\n4. Implement incremental saving to prevent data loss\n5. Add encryption options for sensitive memory content\n6. Create memory integrity validation during loading\n\nTesting approach:\n- Test serialization and deserialization with various memory states\n- Verify data integrity after save/load cycles\n- Test backward compatibility with different versions\n- Check error handling for corrupted or invalid save files",
+          "details": "Implementation details:\
+1. Design serialization format for memory entries (JSON, pickle, or custom format)\
+2. Implement save_to_file(path) and load_from_file(path) methods\
+3. Add memory state versioning for backward compatibility\
+4. Implement incremental saving to prevent data loss\
+5. Add encryption options for sensitive memory content\
+6. Create memory integrity validation during loading\
+\
+Testing approach:\
+- Test serialization and deserialization with various memory states\
+- Verify data integrity after save/load cycles\
+- Test backward compatibility with different versions\
+- Check error handling for corrupted or invalid save files",
           "status": "pending",
           "parentTaskId": 2
         },
@@ -181,108 +302,22 @@
             3,
             4
           ],
-          "details": "Implementation details:\n1. Design query language or interface for complex memory searches\n2. Implement search by content, metadata, time range, and priority\n3. Add pattern matching and semantic similarity search capabilities\n4. Create memory statistics and analytics methods\n5. Implement memory visualization helpers (for debugging/monitoring)\n6. Add hooks for external systems to query memory\n\nTesting approach:\n- Test complex queries with diverse memory content\n- Verify search performance with large memory sets\n- Test pattern matching with various input patterns\n- Ensure statistics accurately reflect memory state\n- Validate that all query types return expected results",
+          "details": "Implementation details:\
+1. Design query language or interface for complex memory searches\
+2. Implement search by content, metadata, time range, and priority\
+3. Add pattern matching and semantic similarity search capabilities\
+4. Create memory statistics and analytics methods\
+5. Implement memory visualization helpers (for debugging/monitoring)\
+6. Add hooks for external systems to query memory\
+\
+Testing approach:\
+- Test complex queries with diverse memory content\
+- Verify search performance with large memory sets\
+- Test pattern matching with various input patterns\
+- Ensure statistics accurately reflect memory state\
+- Validate that all query types return expected results",
           "status": "pending",
           "parentTaskId": 2
-        }
-      ]
-    },
-    {
-      "id": 3,
-      "title": "Implement Long-term Memory System",
-      "description": "Build the persistent knowledge storage system with vector-based retrieval, contextual association mapping, and memory consolidation mechanisms.",
-      "status": "pending",
-      "dependencies": [
-        1,
-        2
-      ],
-      "priority": "high",
-      "details": "Implement vector database integration for semantic storage and retrieval. Create contextual association mapping to link related information. Develop memory consolidation process to move information from short-term to long-term memory. Add mechanisms for knowledge updating and correction. Implement efficient vector search algorithms for retrieval. Create backup and restoration processes for persistence.",
-      "testStrategy": "Test vector similarity search accuracy. Measure retrieval speed for various database sizes. Verify contextual associations maintain relationships correctly. Test memory consolidation with simulated usage patterns.",
-      "subtasks": [
-        {
-          "id": 1,
-          "title": "Set up Vector Database Integration",
-          "description": "Integrate a vector database (like Pinecone, Milvus, or FAISS) to store and retrieve vector embeddings for semantic search capabilities.",
-          "dependencies": [],
-          "details": "Implementation steps:\n1. Research and select an appropriate vector database based on performance needs and scaling requirements\n2. Set up the database connection and configuration\n3. Create a database schema for storing vector embeddings with metadata\n4. Implement basic CRUD operations (create, read, update, delete) for vector entries\n5. Create a connection pool for efficient database access\n6. Implement error handling and connection retry logic\n7. Write unit tests to verify database connectivity and basic operations\n8. Document the integration approach and configuration options",
-          "status": "pending",
-          "parentTaskId": 3
-        },
-        {
-          "id": 2,
-          "title": "Implement Vector Embedding Generation",
-          "description": "Create a system to convert text and other data into vector embeddings that can be stored in the vector database.",
-          "dependencies": [
-            1
-          ],
-          "details": "Implementation steps:\n1. Integrate an embedding model (e.g., OpenAI embeddings, Sentence Transformers)\n2. Create a service to generate embeddings from different data types (text, structured data)\n3. Implement batching for efficient embedding generation\n4. Add caching to avoid regenerating embeddings for identical content\n5. Create normalization functions to prepare data for embedding\n6. Implement dimension reduction techniques if needed for storage efficiency\n7. Add logging for embedding generation process\n8. Test embedding quality and consistency with different input types\n9. Benchmark performance and optimize for speed",
-          "status": "pending",
-          "parentTaskId": 3
-        },
-        {
-          "id": 3,
-          "title": "Build Contextual Association Mapping",
-          "description": "Develop a system to create and maintain relationships between different memory entries based on semantic similarity and explicit connections.",
-          "dependencies": [
-            1,
-            2
-          ],
-          "details": "Implementation steps:\n1. Design a graph-based data structure for storing relationships between memory entries\n2. Implement algorithms to detect semantic relationships between entries\n3. Create methods to explicitly define relationships between entries\n4. Develop a scoring system for relationship strength\n5. Implement traversal algorithms to navigate the relationship graph\n6. Create indexing for efficient relationship queries\n7. Add visualization tools for debugging relationship networks\n8. Test with various relationship patterns and verify correct association\n9. Implement pruning mechanisms to remove weak or outdated associations",
-          "status": "pending",
-          "parentTaskId": 3
-        },
-        {
-          "id": 4,
-          "title": "Develop Efficient Vector Search Algorithms",
-          "description": "Implement advanced search algorithms for retrieving relevant information from the vector database based on semantic similarity.",
-          "dependencies": [
-            1,
-            2
-          ],
-          "details": "Implementation steps:\n1. Implement k-nearest neighbors (KNN) search for basic similarity retrieval\n2. Add support for hybrid search combining vector similarity with metadata filtering\n3. Implement approximate nearest neighbor algorithms for performance optimization\n4. Create query preprocessing to improve search relevance\n5. Add result ranking and post-processing\n6. Implement search result caching for frequently accessed queries\n7. Create performance monitoring for search operations\n8. Test search accuracy with diverse query types\n9. Benchmark and optimize search performance\n10. Document search API and configuration options",
-          "status": "pending",
-          "parentTaskId": 3
-        },
-        {
-          "id": 5,
-          "title": "Create Memory Consolidation Process",
-          "description": "Build a system to analyze, filter, and move information from short-term to long-term memory with appropriate transformations and metadata.",
-          "dependencies": [
-            1,
-            2,
-            3
-          ],
-          "details": "Implementation steps:\n1. Design a short-term memory buffer structure for temporary storage\n2. Implement importance scoring algorithms to determine what should be moved to long-term memory\n3. Create consolidation triggers based on time, importance, and usage patterns\n4. Develop data transformation pipelines for preparing information for long-term storage\n5. Implement metadata enrichment during consolidation\n6. Add scheduling for periodic consolidation processes\n7. Create logging and monitoring for the consolidation process\n8. Implement rollback mechanisms for failed consolidations\n9. Test with various data patterns and volumes\n10. Optimize for resource efficiency during consolidation",
-          "status": "pending",
-          "parentTaskId": 3
-        },
-        {
-          "id": 6,
-          "title": "Implement Knowledge Updating and Correction",
-          "description": "Develop mechanisms to update existing knowledge, handle contradictions, and correct inaccurate information in the long-term memory.",
-          "dependencies": [
-            1,
-            2,
-            4,
-            5
-          ],
-          "details": "Implementation steps:\n1. Create versioning system for memory entries to track changes\n2. Implement conflict detection for contradictory information\n3. Develop resolution strategies for handling conflicts\n4. Create confidence scoring for stored information\n5. Implement decay functions for outdated information\n6. Add explicit correction mechanisms for manual updates\n7. Create audit trails for memory modifications\n8. Implement validation rules for updates\n9. Test with various update scenarios including contradictions\n10. Create notification system for significant knowledge updates",
-          "status": "pending",
-          "parentTaskId": 3
-        },
-        {
-          "id": 7,
-          "title": "Build Backup and Restoration Processes",
-          "description": "Implement systems for regular backups, data persistence, and restoration capabilities to ensure long-term memory reliability.",
-          "dependencies": [
-            1,
-            5,
-            6
-          ],
-          "details": "Implementation steps:\n1. Design backup strategy including frequency and retention policies\n2. Implement incremental and full backup mechanisms\n3. Create secure storage for backups with encryption\n4. Develop integrity verification for backup data\n5. Implement restoration processes with validation\n6. Create disaster recovery procedures\n7. Add monitoring and alerting for backup failures\n8. Implement performance optimization for backup processes\n9. Test restoration under various failure scenarios\n10. Document backup and restoration procedures\n11. Create automated testing for the backup/restore cycle",
-          "status": "pending",
-          "parentTaskId": 3
         }
       ]
     },
@@ -290,7 +325,7 @@
       "id": 4,
       "title": "Develop Tool Management System",
       "description": "Create the standardized tool interface and management system that enables dynamic tool selection based on task requirements.",
-      "status": "pending",
+      "status": "completed",
       "dependencies": [
         1
       ],
@@ -303,8 +338,15 @@
           "title": "Define Tool Interface and Base Classes",
           "description": "Create the standardized interface and abstract base classes that all tools must implement to ensure consistency across the system.",
           "dependencies": [],
-          "details": "Implementation details:\n1. Define a `Tool` interface with required methods like `execute()`, `getCapabilities()`, `getName()`, and `getDescription()`\n2. Create an abstract `BaseTool` class that implements common functionality\n3. Define data structures for tool inputs and outputs\n4. Implement capability declaration mechanism to describe what each tool can do\n5. Add validation methods for checking input/output conformance\n6. Document the interface with examples\n7. Test by creating a simple mock tool implementation that extends the base classes",
-          "status": "pending",
+          "details": "Implementation details:\
+1. Define a `Tool` interface with required methods like `execute()`, `getCapabilities()`, `getName()`, and `getDescription()`\
+2. Create an abstract `BaseTool` class that implements common functionality\
+3. Define data structures for tool inputs and outputs\
+4. Implement capability declaration mechanism to describe what each tool can do\
+5. Add validation methods for checking input/output conformance\
+6. Document the interface with examples\
+7. Test by creating a simple mock tool implementation that extends the base classes",
+          "status": "completed",
           "parentTaskId": 4
         },
         {
@@ -314,8 +356,16 @@
           "dependencies": [
             1
           ],
-          "details": "Implementation details:\n1. Create a `ToolRegistry` singleton class to store and manage tool instances\n2. Implement registration methods (`registerTool()`, `unregisterTool()`)\n3. Add query methods to find tools by name, capability, or other attributes\n4. Implement tool metadata storage for efficient lookup\n5. Add validation to ensure tools implement the required interface\n6. Create events for tool registration/unregistration\n7. Test with multiple mock tools to verify registration and retrieval functionality\n8. Implement caching for frequently accessed tools",
-          "status": "pending",
+          "details": "Implementation details:\
+1. Create a `ToolRegistry` singleton class to store and manage tool instances\
+2. Implement registration methods (`registerTool()`, `unregisterTool()`)\
+3. Add query methods to find tools by name, capability, or other attributes\
+4. Implement tool metadata storage for efficient lookup\
+5. Add validation to ensure tools implement the required interface\
+6. Create events for tool registration/unregistration\
+7. Test with multiple mock tools to verify registration and retrieval functionality\
+8. Implement caching for frequently accessed tools",
+          "status": "completed",
           "parentTaskId": 4
         },
         {
@@ -325,7 +375,15 @@
           "dependencies": [
             1
           ],
-          "details": "Implementation details:\n1. Design a configuration schema for tool settings\n2. Implement configuration loading from various sources (environment variables, config files, etc.)\n3. Create methods for setting and retrieving configuration values\n4. Add validation for configuration values\n5. Implement configuration inheritance and overrides\n6. Create a configuration documentation generator\n7. Test with different configuration scenarios\n8. Ensure configuration changes are properly propagated to tool instances",
+          "details": "Implementation details:\
+1. Design a configuration schema for tool settings\
+2. Implement configuration loading from various sources (environment variables, config files, etc.)\
+3. Create methods for setting and retrieving configuration values\
+4. Add validation for configuration values\
+5. Implement configuration inheritance and overrides\
+6. Create a configuration documentation generator\
+7. Test with different configuration scenarios\
+8. Ensure configuration changes are properly propagated to tool instances",
           "status": "pending",
           "parentTaskId": 4
         },
@@ -338,8 +396,16 @@
             2,
             3
           ],
-          "details": "Implementation details:\n1. Define the selection criteria data structure\n2. Implement matching algorithm between task requirements and tool capabilities\n3. Add scoring mechanism to rank tools by suitability\n4. Create fallback selection strategy when no perfect match exists\n5. Implement caching for selection results to improve performance\n6. Add configuration options to tune selection behavior\n7. Test with various scenarios including edge cases\n8. Document the selection algorithm with examples",
-          "status": "pending",
+          "details": "Implementation details:\
+1. Define the selection criteria data structure\
+2. Implement matching algorithm between task requirements and tool capabilities\
+3. Add scoring mechanism to rank tools by suitability\
+4. Create fallback selection strategy when no perfect match exists\
+5. Implement caching for selection results to improve performance\
+6. Add configuration options to tune selection behavior\
+7. Test with various scenarios including edge cases\
+8. Document the selection algorithm with examples",
+          "status": "completed",
           "parentTaskId": 4
         },
         {
@@ -351,8 +417,16 @@
             2,
             4
           ],
-          "details": "Implementation details:\n1. Implement the execution context object to store execution state\n2. Create parameter validation and transformation logic\n3. Build the execution pipeline with pre/post execution hooks\n4. Implement result processing and transformation\n5. Add execution timeout handling\n6. Create execution history tracking\n7. Implement parallel execution capabilities for compatible tools\n8. Test with synchronous and asynchronous tool executions",
-          "status": "pending",
+          "details": "Implementation details:\
+1. Implement the execution context object to store execution state\
+2. Create parameter validation and transformation logic\
+3. Build the execution pipeline with pre/post execution hooks\
+4. Implement result processing and transformation\
+5. Add execution timeout handling\
+6. Create execution history tracking\
+7. Implement parallel execution capabilities for compatible tools\
+8. Test with synchronous and asynchronous tool executions",
+          "status": "completed",
           "parentTaskId": 4
         },
         {
@@ -362,7 +436,15 @@
           "dependencies": [
             5
           ],
-          "details": "Implementation details:\n1. Define error types and hierarchies specific to tool execution\n2. Implement retry strategies with configurable backoff\n3. Create recovery mechanisms for different failure scenarios\n4. Add circuit breaker pattern to prevent cascading failures\n5. Implement fallback mechanisms when tools consistently fail\n6. Create detailed error reporting with context information\n7. Add hooks for custom error handlers\n8. Test with simulated failures to verify recovery behavior",
+          "details": "Implementation details:\
+1. Define error types and hierarchies specific to tool execution\
+2. Implement retry strategies with configurable backoff\
+3. Create recovery mechanisms for different failure scenarios\
+4. Add circuit breaker pattern to prevent cascading failures\
+5. Implement fallback mechanisms when tools consistently fail\
+6. Create detailed error reporting with context information\
+7. Add hooks for custom error handlers\
+8. Test with simulated failures to verify recovery behavior",
           "status": "pending",
           "parentTaskId": 4
         },
@@ -374,7 +456,16 @@
             5,
             6
           ],
-          "details": "Implementation details:\n1. Define logging schema for tool operations\n2. Implement performance metric collection (execution time, success rate, etc.)\n3. Create usage statistics tracking\n4. Add structured logging for machine-readable output\n5. Implement log rotation and archiving\n6. Create visualization components for monitoring dashboards\n7. Add alerting for anomalous behavior\n8. Test logging under high load conditions\n9. Ensure personally identifiable information (PII) is properly handled in logs",
+          "details": "Implementation details:\
+1. Define logging schema for tool operations\
+2. Implement performance metric collection (execution time, success rate, etc.)\
+3. Create usage statistics tracking\
+4. Add structured logging for machine-readable output\
+5. Implement log rotation and archiving\
+6. Create visualization components for monitoring dashboards\
+7. Add alerting for anomalous behavior\
+8. Test logging under high load conditions\
+9. Ensure personally identifiable information (PII) is properly handled in logs",
           "status": "pending",
           "parentTaskId": 4
         }
@@ -397,7 +488,18 @@
           "title": "Define standardized tool interface for VectorSearch and TextGeneration",
           "description": "Create a common interface that both VectorSearch and TextGeneration tools will implement, ensuring consistency across the tool ecosystem.",
           "dependencies": [],
-          "details": "Implementation details:\n1. Define a base Tool interface/abstract class with common methods like execute(), validate(), getMetadata()\n2. Specify required input/output schemas for tools\n3. Implement parameter validation framework\n4. Create error handling patterns and standard error types\n5. Define caching interface requirements\n6. Document the interface with examples\n\nTesting approach:\n- Unit test the interface with mock implementations\n- Verify error handling works as expected\n- Ensure validation logic functions correctly",
+          "details": "Implementation details:\
+1. Define a base Tool interface/abstract class with common methods like execute(), validate(), getMetadata()\
+2. Specify required input/output schemas for tools\
+3. Implement parameter validation framework\
+4. Create error handling patterns and standard error types\
+5. Define caching interface requirements\
+6. Document the interface with examples\
+\
+Testing approach:\
+- Unit test the interface with mock implementations\
+- Verify error handling works as expected\
+- Ensure validation logic functions correctly",
           "status": "pending",
           "parentTaskId": 5
         },
@@ -408,7 +510,18 @@
           "dependencies": [
             1
           ],
-          "details": "Implementation details:\n1. Create VectorSearch class implementing the Tool interface\n2. Implement connection handlers for different vector databases (e.g., FAISS, Pinecone, Milvus)\n3. Develop query construction and vector embedding generation\n4. Implement similarity search algorithms with configurable parameters (k-nearest neighbors, similarity thresholds)\n5. Add result formatting and processing\n\nTesting approach:\n- Unit test with mock vector databases\n- Integration tests with actual vector databases\n- Performance testing with various dataset sizes\n- Test different similarity metrics and configurations",
+          "details": "Implementation details:\
+1. Create VectorSearch class implementing the Tool interface\
+2. Implement connection handlers for different vector databases (e.g., FAISS, Pinecone, Milvus)\
+3. Develop query construction and vector embedding generation\
+4. Implement similarity search algorithms with configurable parameters (k-nearest neighbors, similarity thresholds)\
+5. Add result formatting and processing\
+\
+Testing approach:\
+- Unit test with mock vector databases\
+- Integration tests with actual vector databases\
+- Performance testing with various dataset sizes\
+- Test different similarity metrics and configurations",
           "status": "pending",
           "parentTaskId": 5
         },
@@ -419,7 +532,18 @@
           "dependencies": [
             1
           ],
-          "details": "Implementation details:\n1. Create TextGeneration class implementing the Tool interface\n2. Implement LLM provider integrations (e.g., OpenAI, Anthropic, local models)\n3. Develop prompt construction and context handling\n4. Add generation parameter controls (temperature, max tokens, etc.)\n5. Implement streaming response handling\n\nTesting approach:\n- Unit test with mock LLM responses\n- Integration tests with actual LLM providers\n- Test various prompt formats and contexts\n- Verify parameter controls affect generation appropriately",
+          "details": "Implementation details:\
+1. Create TextGeneration class implementing the Tool interface\
+2. Implement LLM provider integrations (e.g., OpenAI, Anthropic, local models)\
+3. Develop prompt construction and context handling\
+4. Add generation parameter controls (temperature, max tokens, etc.)\
+5. Implement streaming response handling\
+\
+Testing approach:\
+- Unit test with mock LLM responses\
+- Integration tests with actual LLM providers\
+- Test various prompt formats and contexts\
+- Verify parameter controls affect generation appropriately",
           "status": "pending",
           "parentTaskId": 5
         },
@@ -431,248 +555,23 @@
             2,
             3
           ],
-          "details": "Implementation details:\n1. Design cache key generation based on input parameters\n2. Implement in-memory caching with configurable TTL\n3. Add optional persistent caching to disk/database\n4. Create cache invalidation strategies\n5. Add cache hit/miss metrics\n6. Implement cache size limits and eviction policies\n\nTesting approach:\n- Unit test cache hit/miss scenarios\n- Measure performance improvements with caching enabled\n- Test cache invalidation and eviction\n- Verify thread safety in concurrent environments",
-          "status": "pending",
-          "parentTaskId": 5
-        },
-        {
-          "id": 5,
-          "title": "Add advanced parameter validation and error handling",
-          "description": "Enhance both tools with comprehensive parameter validation and robust error handling to ensure reliability.",
-          "dependencies": [
-            2,
-            3
-          ],
-          "details": "Implementation details:\n1. Implement detailed input validation for all parameters\n2. Create custom error types for different failure scenarios\n3. Add graceful degradation options\n4. Implement retry mechanisms for transient failures\n5. Add detailed error logging and diagnostics\n6. Create user-friendly error messages\n\nTesting approach:\n- Test with invalid inputs and verify appropriate errors\n- Simulate various failure scenarios (network issues, rate limits, etc.)\n- Verify retry logic works correctly\n- Test error propagation through the system",
-          "status": "pending",
-          "parentTaskId": 5
-        },
-        {
-          "id": 6,
-          "title": "Create documentation and usage examples",
-          "description": "Develop comprehensive documentation and example code for both VectorSearch and TextGeneration tools.",
-          "dependencies": [
-            2,
-            3,
-            4,
-            5
-          ],
-          "details": "Implementation details:\n1. Write API documentation with parameter descriptions\n2. Create getting started guides for each tool\n3. Develop code examples for common use cases\n4. Document configuration options and best practices\n5. Create integration examples with other systems\n6. Add performance optimization tips\n\nTesting approach:\n- Verify documentation accuracy by following examples\n- Have team members review for clarity and completeness\n- Test examples in isolation to ensure they work as documented\n- Create automated tests based on documentation examples",
+          "details": "Implementation details:\
+1. Design cache key generation based on input parameters\
+2. Implement in-memory caching with configurable TTL\
+3. Add optional persistent caching to disk/database\
+4. Create cache invalidation strategies\
+5. Add cache hit/miss metrics\
+6. Implement cache size limits and eviction policies\
+\
+Testing approach:\
+- Unit test cache hit/miss scenarios\
+- Measure performance improvements with caching enabled\
+- Test cache invalidation and eviction\
+- Verify thread safety in concurrent environments",
           "status": "pending",
           "parentTaskId": 5
         }
       ]
-    },
-    {
-      "id": 6,
-      "title": "Implement CodeExecutor and WebBrowser Tools",
-      "description": "Develop the CodeExecutor for secure code execution and WebBrowser for web access and information retrieval.",
-      "status": "pending",
-      "dependencies": [
-        4
-      ],
-      "priority": "medium",
-      "details": "Create CodeExecutor with sandboxed environment for secure code execution. Implement language support for Python, JavaScript, and other common languages. Add execution time limits and resource constraints. Develop WebBrowser tool with HTML parsing, JavaScript execution capabilities, and content extraction. Implement rate limiting and caching for web requests. Add security measures to prevent malicious code execution.",
-      "testStrategy": "Test CodeExecutor with various code samples and languages. Verify security constraints prevent unauthorized operations. Test WebBrowser with different websites and content types. Measure performance and resource usage during web browsing operations."
-    },
-    {
-      "id": 7,
-      "title": "Implement ImageAnalysis and KnowledgeGraph Tools",
-      "description": "Develop the ImageAnalysis tool for visual content understanding and KnowledgeGraph for relation-based knowledge representation.",
-      "status": "pending",
-      "dependencies": [
-        4
-      ],
-      "priority": "medium",
-      "details": "Create ImageAnalysis tool with integration to computer vision models for object detection, classification, and image understanding. Implement KnowledgeGraph tool with graph database integration for storing and querying relationship data. Add methods for graph traversal, path finding, and relationship discovery. Ensure both tools follow the standardized interface. Implement caching and optimization for performance.",
-      "testStrategy": "Test ImageAnalysis with various image types and visual scenarios. Verify KnowledgeGraph correctly stores and retrieves relationship data. Test complex graph queries and traversals. Measure performance with large graphs and image datasets."
-    },
-    {
-      "id": 8,
-      "title": "Implement DocAnalysis and RAGRetrieval Tools",
-      "description": "Develop the DocAnalysis tool for document understanding and extraction, and RAGRetrieval for Retrieval-Augmented Generation capabilities.",
-      "status": "pending",
-      "dependencies": [
-        4,
-        5
-      ],
-      "priority": "medium",
-      "details": "Create DocAnalysis tool with support for various document formats (PDF, DOCX, etc.). Implement text extraction, structure recognition, and metadata parsing. Develop RAGRetrieval tool that combines vector search with text generation for knowledge-grounded responses. Integrate with the memory system for context-aware retrieval. Add document chunking and processing pipelines. Implement caching for improved performance.",
-      "testStrategy": "Test DocAnalysis with various document types and structures. Verify text extraction accuracy and metadata parsing. Test RAGRetrieval with different queries and knowledge bases. Measure relevance and quality of augmented generation."
-    },
-    {
-      "id": 9,
-      "title": "Develop Planning System Core",
-      "description": "Implement the cognitive planning system with reflection, self-critics, chain of thoughts, and subgoal decomposition capabilities.",
-      "status": "pending",
-      "dependencies": [
-        1,
-        2,
-        3
-      ],
-      "priority": "high",
-      "details": "Create planning system architecture with components for goal analysis, strategy formulation, and plan generation. Implement reflection mechanisms for self-assessment of reasoning processes. Add self-critics for error identification and correction. Develop chain of thought processes for transparent reasoning. Implement subgoal decomposition for breaking complex problems into manageable tasks. Create plan representation format and storage.",
-      "testStrategy": "Test planning system with various goal complexities. Verify subgoal decomposition creates appropriate subtasks. Evaluate reflection and self-criticism with intentionally flawed plans. Measure planning efficiency and quality.",
-      "subtasks": [
-        {
-          "id": 1,
-          "title": "Implement Goal Analysis and Decomposition Module",
-          "description": "Create the foundation module that analyzes high-level goals and decomposes them into manageable subgoals using hierarchical structures",
-          "dependencies": [],
-          "details": "Implement a GoalAnalyzer class that takes a high-level goal as input and outputs a structured representation of subgoals. Create data structures for goal representation including goal properties, success criteria, and dependencies between subgoals. Develop algorithms for identifying logical subgoals based on task complexity and dependencies. Include methods for validating goal decomposition completeness. Test with various goal complexities to ensure proper decomposition. This module should expose clear interfaces for the planning system to interact with decomposed goals.",
-          "status": "pending",
-          "parentTaskId": 9
-        },
-        {
-          "id": 2,
-          "title": "Develop Strategy Formulation Component",
-          "description": "Build the component responsible for generating strategic approaches to achieve goals based on the decomposed subgoals",
-          "dependencies": [
-            1
-          ],
-          "details": "Create a StrategyGenerator class that consumes decomposed goals from the Goal Analysis module and produces strategic approaches. Implement multiple strategy generation algorithms including template-based, precedent-based, and first-principles reasoning. Design a strategy evaluation mechanism to rank potential approaches based on feasibility, resource requirements, and likelihood of success. Include interfaces for strategy representation, comparison, and selection. Develop unit tests for strategy generation with different goal types. Ensure the component can explain the rationale behind generated strategies to support transparency.",
-          "status": "pending",
-          "parentTaskId": 9
-        },
-        {
-          "id": 3,
-          "title": "Implement Chain of Thought and Reasoning Engine",
-          "description": "Create the reasoning engine that implements transparent chain of thought processes for plan generation and decision making",
-          "dependencies": [
-            1,
-            2
-          ],
-          "details": "Develop a ReasoningEngine class that implements step-by-step logical reasoning processes. Create data structures to represent and store reasoning chains with intermediate steps, assumptions, and conclusions. Implement methods to generate, validate, and traverse reasoning chains. Design interfaces to expose reasoning processes for inspection and explanation. Build mechanisms to identify logical fallacies or gaps in reasoning chains. Integrate with the Strategy Formulation component to apply reasoning to strategy selection. Test with complex reasoning scenarios requiring multiple logical steps. Include serialization methods for storing and retrieving reasoning chains.",
-          "status": "pending",
-          "parentTaskId": 9
-        },
-        {
-          "id": 4,
-          "title": "Build Self-Criticism and Reflection System",
-          "description": "Implement mechanisms for the planning system to critically evaluate its own outputs and reasoning processes",
-          "dependencies": [
-            3
-          ],
-          "details": "Create a ReflectionSystem class with capabilities to analyze and critique reasoning chains, strategies, and plans. Implement multiple critique perspectives (feasibility, completeness, efficiency, etc.) that can be applied to any planning output. Develop metrics for self-evaluation of plan quality. Build mechanisms to identify potential failure points in plans. Create interfaces for recording reflections and critiques alongside plans. Implement suggestion generation for plan improvements based on identified weaknesses. Test with deliberately flawed plans to ensure critique effectiveness. Design the system to integrate reflection outputs back into the planning process for iterative improvement.",
-          "status": "pending",
-          "parentTaskId": 9
-        },
-        {
-          "id": 5,
-          "title": "Develop Plan Representation and Integration Layer",
-          "description": "Create the final plan representation format and integration layer that connects all planning components into a cohesive system",
-          "dependencies": [
-            1,
-            2,
-            3,
-            4
-          ],
-          "details": "Design and implement comprehensive Plan data structures that incorporate subgoals, strategies, reasoning chains, and reflections. Create a PlanningSystem orchestrator class that coordinates the workflow between all components. Implement plan serialization and storage mechanisms for persistence. Develop interfaces for external systems to request plans, monitor execution, and provide feedback. Build plan visualization capabilities for human review. Create comprehensive integration tests that exercise the full planning pipeline. Implement hooks for memory system integration to store and retrieve past plans. Design interfaces for tool management to allow plans to incorporate tool usage. Include documentation generation capabilities to explain plans in human-readable format.",
-          "status": "pending",
-          "parentTaskId": 9
-        }
-      ]
-    },
-    {
-      "id": 10,
-      "title": "Implement Action System Execution Engine",
-      "description": "Develop the execution engine for implementing plans with monitoring capabilities and handling environmental uncertainties.",
-      "status": "pending",
-      "dependencies": [
-        9
-      ],
-      "priority": "high",
-      "details": "Create execution engine that can interpret and execute plans from the planning system. Implement monitoring capabilities to track progress and detect deviations. Add mechanisms for handling environmental uncertainties and unexpected outcomes. Develop real-time adjustment capabilities for changing conditions. Implement execution logging and state tracking. Create interfaces between execution engine and tool management system.",
-      "testStrategy": "Test execution of various plan types. Verify monitoring correctly identifies progress and issues. Test adaptation to simulated environmental changes. Measure execution efficiency and resource usage."
-    },
-    {
-      "id": 11,
-      "title": "Implement Feedback Mechanism",
-      "description": "Develop the feedback system with performance evaluation metrics, failure analysis framework, and continuous improvement capabilities.",
-      "status": "pending",
-      "dependencies": [
-        9,
-        10
-      ],
-      "priority": "medium",
-      "details": "Create feedback collection system that gathers execution results and performance data. Implement performance evaluation metrics for various aspects of agent behavior. Develop failure analysis framework to identify and categorize errors. Add learning mechanisms for continuous improvement through experience. Create feedback visualization and reporting. Implement feedback integration with planning and memory systems.",
-      "testStrategy": "Test feedback collection with various execution scenarios. Verify metrics accurately reflect performance. Test failure analysis with intentionally problematic executions. Evaluate improvement over time with repeated similar tasks."
-    },
-    {
-      "id": 12,
-      "title": "Develop REST API and Integration Interfaces",
-      "description": "Implement the REST API, webhooks, and SDK support for Python, JavaScript, and Java to enable integration with other systems.",
-      "status": "pending",
-      "dependencies": [
-        1,
-        2,
-        3,
-        4,
-        9,
-        10
-      ],
-      "priority": "medium",
-      "details": "Design and implement REST API endpoints for all major system functions. Create webhook system for event-driven integrations. Develop SDK libraries for Python, JavaScript, and Java with consistent interfaces. Add authentication and authorization mechanisms. Implement rate limiting and usage tracking. Create comprehensive API documentation with examples. Add versioning support for API stability.",
-      "testStrategy": "Test API endpoints with various request types and parameters. Verify webhook triggers and deliveries. Test SDK functionality across supported languages. Measure API performance and reliability under load."
-    },
-    {
-      "id": 13,
-      "title": "Implement Monitoring and Visualization Tools",
-      "description": "Develop real-time agent state visualization, performance dashboards, execution logs, and memory utilization analytics.",
-      "status": "pending",
-      "dependencies": [
-        2,
-        3,
-        10,
-        11
-      ],
-      "priority": "low",
-      "details": "Create monitoring system that collects metrics from all components. Implement real-time visualization of agent state and activities. Develop performance dashboards with key metrics and trends. Add detailed execution logging with reasoning transparency. Create memory utilization analytics to track storage efficiency. Implement alerting for critical issues. Add historical data storage and analysis.",
-      "testStrategy": "Verify monitoring correctly captures system state. Test visualization accuracy with known agent states. Evaluate dashboard usability and information clarity. Test logging detail and searchability."
-    },
-    {
-      "id": 14,
-      "title": "Develop Configuration and Developer Experience",
-      "description": "Implement YAML-based configuration, environment variable support, web-based configuration interface, and preset profiles for typical use cases.",
-      "status": "pending",
-      "dependencies": [
-        1,
-        12
-      ],
-      "priority": "medium",
-      "details": "Enhance YAML configuration system with validation and documentation. Add environment variable support for deployment settings. Create web-based configuration interface for easy setup. Develop preset profiles for common agent types and use cases. Implement configuration versioning and migration. Add configuration export and import capabilities. Create interactive tutorials for key components.",
-      "testStrategy": "Test configuration loading with various formats and options. Verify environment variable overrides work correctly. Test web interface usability with different configurations. Verify preset profiles create expected agent behaviors."
-    },
-    {
-      "id": 15,
-      "title": "Create Comprehensive Documentation and Examples",
-      "description": "Develop detailed documentation, interactive tutorials, templates for common agent types, and example implementations.",
-      "status": "pending",
-      "dependencies": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14
-      ],
-      "priority": "medium",
-      "details": "Create comprehensive documentation covering all system components and features. Develop interactive tutorials for key functionality. Create templates for common agent types with configuration and code. Implement example applications demonstrating various use cases. Add troubleshooting guides and best practices. Create API reference documentation. Develop getting started guides for new users. Include performance optimization recommendations.",
-      "testStrategy": "Review documentation for accuracy and completeness. Test tutorials with users of different experience levels. Verify examples work as described. Collect feedback on documentation clarity and usefulness."
     }
-  ],
-  "metadata": {
-    "projectName": "Agent Nexus: Cognitive Agent Architecture Framework",
-    "totalTasks": 15,
-    "sourceFile": "/Users/hkr/Documents/GitHub/AgentNexus/scripts/prd.txt",
-    "generatedAt": "2023-11-15"
-  }
+  ]
 }
