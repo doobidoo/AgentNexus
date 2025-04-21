@@ -105,7 +105,7 @@ export class ParallelExecutor {
       maxParallel: options.maxParallel || 4,
       failFast: options.failFast !== false,
       combineResults: options.combineResults !== false,
-      executionOrder: options.executionOrder || undefined  // Provide undefined as fallback for optional property
+      executionOrder: options.executionOrder || []  // Provide empty array as fallback
     };
     
     // Generate a common request ID
@@ -279,8 +279,8 @@ export class ParallelExecutor {
     executionPlan: Record<string, ExecutionPlanEntry>,
     manualOrder?: string[][]
   ): string[][] {
-    // If manual order is provided, use it
-    if (manualOrder && Array.isArray(manualOrder)) {
+    // If manual order is provided and not empty, use it
+    if (manualOrder && Array.isArray(manualOrder) && manualOrder.length > 0) {
       return manualOrder;
     }
     
