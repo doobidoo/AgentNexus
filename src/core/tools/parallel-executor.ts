@@ -100,12 +100,12 @@ export class ParallelExecutor {
       transformResults: options.transformResults !== false,
       hooks: options.hooks || {},
       metadata: options.metadata || {},
-      parentContextId: options.parentContextId,
+      parentContextId: options.parentContextId || '',  // Provide empty string as fallback
       trackHistory: options.trackHistory !== false,
       maxParallel: options.maxParallel || 4,
       failFast: options.failFast !== false,
       combineResults: options.combineResults !== false,
-      executionOrder: options.executionOrder
+      executionOrder: options.executionOrder || undefined  // Provide undefined as fallback for optional property
     };
     
     // Generate a common request ID

@@ -16,6 +16,7 @@ import { CodeExecutor } from './code-executor';
 import { WebBrowser } from './web-browser';
 import { EventEmitter } from 'events';
 import { configManager, ConfigEventType, ToolConfigSchema } from './config-manager';
+import { ToolSelector, SelectionStrategy, ToolSelectionOptions, ToolSelectionResult } from './tool-selection';
 
 // Tool registry type
 export type ToolRegistry = Record<string, BaseTool>;
@@ -56,6 +57,8 @@ export class ToolsManager extends EventEmitter {
   private executionFramework: ToolExecutionFramework;
   // Parallel executor for concurrent tool operations
   private parallelExecutor: ParallelExecutor;
+  // Tool selector for advanced selection algorithms
+  private toolSelector: ToolSelector;
   // Registry of available tools
   private tools: ToolRegistry;
   // Tool metadata for efficient lookup
@@ -72,6 +75,9 @@ export class ToolsManager extends EventEmitter {
     
     // Initialize parallel executor
     this.parallelExecutor = new ParallelExecutor(this.executionFramework);
+    
+    // Initialize tool selector with default settings
+    this.toolSelector = new ToolSelector();
     
     // Forward execution events
     this.forwardExecutionEvents();
@@ -318,57 +324,29 @@ export class ToolsManager extends EventEmitter {
    * Select appropriate tools based on task description
    * 
    * @param taskDescription Description of the task
+   * @param options Optional selection options
    * @returns Array of tool names that are suitable for the task
    */
-  selectToolsForTask(taskDescription: string): string[] {
-    // This is a more sophisticated implementation
-    const toolMatches: Array<{ name: string; score: number }> = [];
-    
-    // Score each tool based on various factors
-    for (const [name, tool] of Object.entries(this.tools)) {
-      const metadata = this.toolMetadata[name];
-      
-      // Match capabilities by checking if any capabilities are mentioned in the task
-      const matchedCapabilities = metadata.capabilities.filter(capability => 
-        taskDescription.toLowerCase().includes(capability.toLowerCase())
-      );
-      
-      // Match by keywords in description
-      const descriptionKeywords = metadata.description.toLowerCase()
-        .split(/\s+/)
-        .filter(word => word.length > 3); // Only consider words with more than 3 characters
-      
-      const matchedKeywords = descriptionKeywords.filter(word => 
-        taskDescription.toLowerCase().includes(word)
-      );
-      
-      // Match by tool name
-      const nameMatch = taskDescription.toLowerCase().includes(name.toLowerCase());
-      
-      // Match by tags if available
-      const matchedTags = (metadata.tags || []).filter(tag => 
-        taskDescription.toLowerCase().includes(tag.toLowerCase())
-      );
-      
-      // Calculate score based on matches
-      let score = 0;
-      // Capability matches are most important
-      score += matchedCapabilities.length * 2;
-      // Keyword matches from description
-      score += matchedKeywords.length * 0.5;
-      // Name match is a strong signal
-      if (nameMatch) score += 2;
-      // Tag matches
-      score += matchedTags.length * 1;
-      
-      toolMatches.push({ name, score });
-    }
-    
-    // Sort by score (descending) and return tools with score > 0
-    return toolMatches
-      .filter(match => match.score > 0)
-      .sort((a, b) => b.score - a.score)
-      .map(match => match.name);
+  selectToolsForTask(taskDescription: string, options?: ToolSelectionOptions): string[] {
+    const selectionResult = this.getToolSelectionDetails(taskDescription, options);
+    return selectionResult.selectedTools;
+  }
+
+  /**
+   * Get detailed tool selection results including scores and reasons
+   * 
+   * @param taskDescription Description of the task
+   * @param options Optional selection options
+   * @returns Detailed selection result
+   */
+  getToolSelectionDetails(taskDescription: string, options?: ToolSelectionOptions): ToolSelectionResult {
+    // Use the advanced tool selector for selection
+    return this.toolSelector.selectTools(
+      taskDescription,
+      this.tools,
+      this.toolMetadata,
+      options
+    );
   }
   
   /**
@@ -387,6 +365,25 @@ export class ToolsManager extends EventEmitter {
    */
   getParallelExecutor(): ParallelExecutor {
     return this.parallelExecutor;
+  }
+
+  /**
+   * Get the tool selector
+   * 
+   * @returns The tool selector
+   */
+  getToolSelector(): ToolSelector {
+    return this.toolSelector;
+  }
+  
+  /**
+   * Configure the tool selector cache settings
+   * 
+   * @param ttl Cache TTL in milliseconds
+   * @param maxSize Maximum cache size
+   */
+  configureToolSelector(ttl: number, maxSize: number): void {
+    this.toolSelector.configureCache(ttl, maxSize);
   }
   
   /**
@@ -718,3 +715,17 @@ export class ToolsManager extends EventEmitter {
     // Note: Additional tools will be registered as they are implemented
   }
 }
+
+// Create and export a singleton instance of the ToolsManager
+export const toolsManager = new ToolsManager();
+
+// Export other components and types
+export { BaseTool, ToolInput, ToolOutput } from './base';
+export { ExecutionContext, ExecutionOptions, ExecutionHooks, ToolExecutionEvent, ToolExecutionFramework } from './execution-context';
+export { ParallelExecutionOptions, ParallelExecutionResult, ParallelExecutor } from './parallel-executor';
+export { ConfigSourceType, ToolConfigSchema, ConfigValidationError, ConfigEventType } from './config-manager';
+export { SelectionStrategy, ToolSelectionOptions, ToolSelectionResult, ToolSelector } from './tool-selection';
+export { TextGeneration, TextGenerationParams } from './text-generation';
+export { VectorSearch } from './vector-search';
+export { CodeExecutor } from './code-executor';
+export { WebBrowser } from './web-browser';
