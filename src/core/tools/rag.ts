@@ -92,14 +92,15 @@ export class RAG extends AbstractTool {
       
       // Step 1: Retrieve relevant documents using VectorSearch
       const searchInput: ToolInput = {
-        tool: 'vectorSearch',
         params: {
           query,
           collection,
           topK,
           similarityThreshold,
           filters
-        }
+        },
+        timestamp: new Date().toISOString(),
+        requestId: input.requestId || `req_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`
       };
       
       const searchResult = await this.vectorSearch.execute(searchInput);
@@ -114,12 +115,13 @@ export class RAG extends AbstractTool {
         console.log('No relevant documents found, falling back to direct generation');
         
         const genInput: ToolInput = {
-          tool: 'textGeneration',
           params: {
             prompt: `Note: I don't have specific information about this in my knowledge base, but I'll try to answer based on my general knowledge.\n\n${query}`,
             temperature,
             maxTokens
-          }
+          },
+          timestamp: new Date().toISOString(),
+          requestId: input.requestId || `req_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`
         };
         
         const genResult = await this.textGeneration.execute(genInput);
@@ -154,12 +156,13 @@ export class RAG extends AbstractTool {
       
       // Step 4: Generate text based on the context and query
       const genInput: ToolInput = {
-        tool: 'textGeneration',
         params: {
           prompt,
           temperature,
           maxTokens
-        }
+        },
+        timestamp: new Date().toISOString(),
+        requestId: input.requestId || `req_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`
       };
       
       const genResult = await this.textGeneration.execute(genInput);
