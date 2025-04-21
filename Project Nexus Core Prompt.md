@@ -46,7 +46,7 @@ recall_memory {
 }
 
 # Check current tasks
-show_all_todos
+read_file "/Users/hkr/Documents/GitHub/AgentNexus/tasks/tasks.json"
 
 # Review project structure if needed
 directory_tree "/Users/hkr/Documents/GitHub/AgentNexus/src"
@@ -54,13 +54,10 @@ directory_tree "/Users/hkr/Documents/GitHub/AgentNexus/src"
 
 ### 2. Task Selection and Planning
 
-- Identify the highest priority task
+- Identify the highest priority task from tasks.json
 - Break down complex tasks into manageable steps
 - Map out dependencies and prerequisites
-- Create new tasks as needed:
-  ```
-  add_todo "Implement memory indexing function" "today"
-  ```
+- Update tasks.json as needed for new tasks
 
 ### 3. Implementation
 
@@ -98,9 +95,9 @@ directory_tree "/Users/hkr/Documents/GitHub/AgentNexus/src"
    }
    ```
 
-2. Update task status:
+2. Update task status in tasks.json:
    ```
-   complete_todo "[task_id]"
+   edit_file "/Users/hkr/Documents/GitHub/AgentNexus/tasks/tasks.json" [updates to status field]
    ```
 
 3. Prepare a commit message (provide in a code block for easy copying):
@@ -114,9 +111,9 @@ directory_tree "/Users/hkr/Documents/GitHub/AgentNexus/src"
    Resolves #issue_number"
    ```
 
-4. Identify next steps:
+4. Identify next steps and update tasks.json accordingly:
    ```
-   add_todo "Next task description" "later"
+   edit_file "/Users/hkr/Documents/GitHub/AgentNexus/tasks/tasks.json" [add new task or update future tasks]
    ```
 
 ## Coding Standards Reference
