@@ -12,12 +12,8 @@ Project Nexus is a cognitive agent architecture framework that integrates memory
 
 - `nexus-status`: Review overall project status, current priorities, and next steps
 - `nexus-continue`: Continue highest priority task from previous session 
-- `nexus-standards [component]`: Access detailed standards for a specific component:
-  - `nexus-standards memory`: Memory system standards
-  - `nexus-standards planning`: Planning system standards
-  - `nexus-standards action`: Action system standards
-  - `nexus-standards tools`: Tool system standards
-  - `nexus-standards web`: Web automation standards
+- `nexus-standards [component]`: Access detailed standards for a specific component (memory, planning, action, tools, web)
+- `nexus-file [operation] [path]`: Perform file operations (read, write, edit, search)
 
 ### System-Specific Commands
 
@@ -27,104 +23,42 @@ Project Nexus is a cognitive agent architecture framework that integrates memory
 - `nexus-tools`: Focus on tool management system development
 - `nexus-integration`: Implement API and integration interfaces
 
-### File and Repository Commands
-
-- `nexus-file read [path]`: Read a file from the repository
-- `nexus-file write [path] [content]`: Create or update a file
-- `nexus-file edit [path] [edits]`: Edit an existing file
-- `nexus-file search [pattern]`: Search for files in the repository
-
 ## Development Workflow
 
-### 1. Session Initialization
+### Session Initialization
 
-```
-# Review previous work
-recall_memory {
-  query: "last session on Project Nexus",
-  n_results: 3
-}
+1. Review previous work via the memory system
+2. Check current tasks in `/Users/hkr/Documents/GitHub/AgentNexus/tasks/tasks.json`
+3. Examine relevant source files in the project structure
 
-# Check current tasks
-read_file "/Users/hkr/Documents/GitHub/AgentNexus/tasks/tasks.json"
+### Task Selection
 
-# Review project structure if needed
-directory_tree "/Users/hkr/Documents/GitHub/AgentNexus/src"
-```
+1. Identify the highest priority incomplete task from tasks.json
+2. Break down complex tasks into manageable steps
+3. Map out dependencies and prerequisites
 
-### 2. Task Selection and Planning
+### Implementation
 
-- Identify the highest priority task from tasks.json
-- Break down complex tasks into manageable steps
-- Map out dependencies and prerequisites
-- Update tasks.json as needed for new tasks
+1. Write well-structured TypeScript code following project patterns
+2. Implement comprehensive tests as specified
+3. Document code thoroughly with JSDoc comments
 
-### 3. Implementation
-
-- Read existing code to understand context
-- Write and edit files using file system functions
-- Follow established coding standards (TypeScript with OOP principles)
-- Organize code according to project structure:
-  - Core components in /src/core/
-  - System-specific modules in respective folders (/memory/, /planning/, etc.)
-
-### 4. Testing
-
-- Write unit tests concurrently with implementation
-- Ensure comprehensive testing of new functionality
-- Verify integration with existing components
-
-### 5. Documentation
-
-- Add JSDoc comments to all code
-- Update README files as needed
-- Document APIs and interfaces
-
-### 6. Session Completion
+### Session Completion
 
 **Important: ALWAYS conclude sessions with these steps:**
 
-1. Summarize the work accomplished:
-   ```
-   store_memory {
-     content: "Session summary: [Brief description of work done]",
-     metadata: {
-       tags: "session-summary,[relevant-tags]",
-       type: "summary"
-     }
-   }
-   ```
+1. Store a summary in memory describing work completed
+2. Update task status in tasks.json
+3. Provide a commit message in a code block for easy copying
+4. Identify next steps and update tasks.json accordingly
 
-2. Update task status in tasks.json:
-   ```
-   edit_file "/Users/hkr/Documents/GitHub/AgentNexus/tasks/tasks.json" [updates to status field]
-   ```
+## Response Guidelines
 
-3. Prepare a commit message (provide in a code block for easy copying):
-   ```
-   git commit -m "feat(component): Brief description
-   
-   - Detail point 1
-   - Detail point 2
-   - Detail point 3
-   
-   Resolves #issue_number"
-   ```
-
-4. Identify next steps and update tasks.json accordingly:
-   ```
-   edit_file "/Users/hkr/Documents/GitHub/AgentNexus/tasks/tasks.json" [add new task or update future tasks]
-   ```
-
-## Coding Standards Reference
-
-- Use TypeScript with strict typing
-- Follow OOP principles with interfaces and abstract classes
-- Implement comprehensive error handling and logging
-- Create modular components with clear responsibilities
-- Write pure functions where possible
-- Use dependency injection for testability
-- Implement async/await for asynchronous operations
+1. **Be concise and direct** - Focus on solutions, not extended reasoning
+2. **Reduce repetition** - Don't restate what's already known
+3. **Limit explanations** - Provide implementation details only when needed
+4. **Structure output** - Use clear headings and formatting
+5. **Code first approach** - Prioritize code examples over text when appropriate
 
 ## Project Structure
 
@@ -133,9 +67,5 @@ directory_tree "/Users/hkr/Documents/GitHub/AgentNexus/src"
   - /planning/ - Planning system components
   - /action/ - Action execution engine
   - /tools/ - Tool management system
-  - /integration/ - API and external integrations
-- /tests/ - Test suites
-- /docs/ - Documentation
-  - /standards/ - Detailed standard documents
 
-For detailed standards on specific components, use `nexus-standards [component]` command to access the comprehensive guidelines stored in the repository.
+For detailed standards on specific components, use `nexus-standards [component]` command.
