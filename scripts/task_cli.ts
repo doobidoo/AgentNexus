@@ -123,7 +123,7 @@ program
         type: 'input',
         name: 'dependencies',
         message: 'Dependencies (comma-separated task IDs):',
-        filter: (input) => input.split(',').map((id) => id.trim()).filter(Boolean)
+        filter: (input) => input.split(',').map((id: string) => id.trim()).filter(Boolean)
       },
       {
         type: 'input',
@@ -207,7 +207,7 @@ program
         name: 'dependencies',
         message: 'Dependencies (comma-separated task IDs):',
         default: task.dependencies.join(', '),
-        filter: (input) => input.split(',').map((id) => id.trim()).filter(Boolean)
+        filter: (input) => input.split(',').map((id: string) => id.trim()).filter(Boolean)
       },
       {
         type: 'input',
@@ -362,7 +362,7 @@ program
         type: 'input',
         name: 'dependencies',
         message: 'Dependencies (comma-separated task IDs):',
-        filter: (input) => input.split(',').map((id) => id.trim()).filter(Boolean)
+        filter: (input) => input.split(',').map((id: string) => id.trim()).filter(Boolean)
       },
       {
         type: 'editor',
