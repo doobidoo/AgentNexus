@@ -158,14 +158,14 @@ export class GeminiProvider extends BaseModelProvider {
         const results = await Promise.all(
           text.map(t => {
             // Create a content object with text parts
-            return model.embedContent({ content: [{ text: t }] });
+            return model.embedContent({ content: { parts: [{ text: t }], role: 'user' } });
           })
         );
         
         return results.map(result => result.embedding.values);
       } else {
         // Single embedding generation
-        const result = await model.embedContent({ content: [{ text }] });
+        const result = await model.embedContent({ content: { parts: [{ text }], role: 'user' } });
         return result.embedding.values;
       }
     } catch (error) {
