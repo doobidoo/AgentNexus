@@ -720,12 +720,17 @@ export class ToolsManager extends EventEmitter {
 export const toolsManager = new ToolsManager();
 
 // Export other components and types
-export { BaseTool, ToolInput, ToolOutput } from './base';
-export { ExecutionContext, ExecutionOptions, ExecutionHooks, ToolExecutionEvent, ToolExecutionFramework } from './execution-context';
-export { ParallelExecutionOptions, ParallelExecutionResult, ParallelExecutor } from './parallel-executor';
-export { ConfigSourceType, ToolConfigSchema, ConfigValidationError, ConfigEventType } from './config-manager';
-export { SelectionStrategy, ToolSelectionOptions, ToolSelectionResult, ToolSelector } from './tool-selection';
-export { TextGeneration, TextGenerationParams } from './text-generation';
+export type { BaseTool, ToolInput, ToolOutput } from './base';
+export type { ExecutionContext, ExecutionOptions, ExecutionHooks } from './execution-context';
+export { ToolExecutionEvent, ToolExecutionFramework } from './execution-context';
+export type { ParallelExecutionOptions, ParallelExecutionResult } from './parallel-executor';
+export { ParallelExecutor } from './parallel-executor';
+export type { ConfigSourceType, ToolConfigSchema, ConfigValidationError } from './config-manager';
+export { ConfigEventType } from './config-manager';
+export type { SelectionStrategy, ToolSelectionOptions, ToolSelectionResult } from './tool-selection';
+export { ToolSelector } from './tool-selection';
+export { TextGeneration } from './text-generation';
+export type { TextGenerationParams } from './text-generation';
 export { VectorSearch } from './vector-search';
 export { CodeExecutor } from './code-executor';
 export { WebBrowser } from './web-browser';
