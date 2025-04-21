@@ -110,7 +110,7 @@ export class RAG extends AbstractTool {
       }
       
       // If no results found, inform the user
-      if (!searchResult.data || searchResult.data.length === 0) {
+      if (!searchResult.result || !Array.isArray(searchResult.result) || searchResult.result.length === 0) {
         // Fall back to direct text generation with a warning
         console.log('No relevant documents found, falling back to direct generation');
         
@@ -131,7 +131,7 @@ export class RAG extends AbstractTool {
         }
         
         return this.createSuccessOutput({
-          answer: genResult.data,
+          answer: genResult.result,
           context: [],
           metadata: {
             retrievalCount: 0,
@@ -141,7 +141,7 @@ export class RAG extends AbstractTool {
       }
       
       // Step 2: Format the context from retrieved documents
-      const context = searchResult.data.map(item => {
+      const context = searchResult.result.map(item => {
         if (includeMetadata && item.metadata) {
           return `${item.content}\n(Source: ${JSON.stringify(item.metadata)})`;
         }
@@ -173,12 +173,12 @@ export class RAG extends AbstractTool {
       
       // Step 5: Return the generated answer along with metadata
       return this.createSuccessOutput({
-        answer: genResult.data,
-        context: searchResult.data,
+        answer: genResult.result,
+        context: searchResult.result,
         metadata: {
-          retrievalCount: searchResult.data.length,
+          retrievalCount: searchResult.result.length,
           usedFallback: false,
-          topScore: searchResult.data[0].score
+          topScore: searchResult.result[0].score
         }
       }, input);
     } catch (error) {
