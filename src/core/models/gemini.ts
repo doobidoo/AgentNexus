@@ -148,18 +148,24 @@ export class GeminiProvider extends BaseModelProvider {
   async generateEmbeddings(text: string | string[], options?: EmbeddingOptions): Promise<number[] | number[][]> {
     try {
       const modelName = options?.model || this.info.defaultEmbeddingModel;
-      const embeddingModel = this.client.getEmbeddingModel({ model: modelName });
+      
+      // The GoogleGenerativeAI class uses a different approach for embeddings in the latest version
+      // First, get the embedding model using the new API
+      const model = this.client.getGenerativeModel({ model: modelName });
       
       if (Array.isArray(text)) {
         // Batch embedding generation
         const results = await Promise.all(
-          text.map(t => embeddingModel.embedContent(t))
+          text.map(t => {
+            // Create a content object with text parts
+            return model.embedContent({ content: [{ text: t }] });
+          })
         );
         
         return results.map(result => result.embedding.values);
       } else {
         // Single embedding generation
-        const result = await embeddingModel.embedContent(text);
+        const result = await model.embedContent({ content: [{ text }] });
         return result.embedding.values;
       }
     } catch (error) {
