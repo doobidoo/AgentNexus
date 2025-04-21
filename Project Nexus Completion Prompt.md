@@ -182,6 +182,21 @@ Utilize GitHub MCP functions for efficient repository management:
    - Describe what and why, not how
    - Reference tasks or issues when relevant
 
+6. **Session Completion Repository Handling:**
+   - After completing tasks, always provide a formatted commit message in a code block
+   - Store a memory entry summarizing the changes made
+   - The commit message should follow the format:
+   ```
+   git commit -m "[Action] [Component]: [Brief description]
+   
+   - [Detail point 1]
+   - [Detail point 2]
+   - [Detail point 3]
+   
+   [References/Issue numbers]"
+   ```
+   - This commit message should be easily copyable for direct use in the terminal
+
 ### Memory System Workflow
 
 Use memory MCP functions to maintain project context across sessions:
@@ -700,9 +715,9 @@ Maintain the use of Playwright as the primary tool for web automation:
    complete_todo "task_id"
    ```
 
-3. Prepare commit message:
+3. Prepare commit message (always provide this in a code block for easy copying):
    ```
-   git commit -m "Implement memory indexing with B-tree structure
+   git commit -m "feat(memory): Implement memory indexing with B-tree structure
 
    - Add B-tree implementation for memory indexing
    - Optimize retrieval performance to O(log n)
@@ -716,6 +731,11 @@ Maintain the use of Playwright as the primary tool for web automation:
    ```
    add_todo "Optimize memory retrieval for large datasets" "later"
    ```
+
+**Important**: After every development session, ALWAYS provide:
+1. A memory entry storing the session's accomplishments and decisions
+2. A properly formatted commit message in a code block
+3. This is mandatory even for small changes or partial task completion
 
 ### Cross-Session Continuity
 
