@@ -8,6 +8,10 @@
 import dotenv from 'dotenv';
 import { ModelManager, createModelProvider } from './index';
 
+// Variable to store environment variables if needed
+// This is used as a fallback but most of the code uses process.env directly
+let envVars: NodeJS.ProcessEnv;
+
 // Override dotenv in Next.js environment
 console.log('Initializing model providers...');
 try {
