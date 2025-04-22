@@ -39,6 +39,8 @@ export interface ToolSelectionResult {
     toolsEvaluated: number;
     // Query context used
     queryContext?: string;
+    // Whether the result was from cache
+    fromCache?: boolean;
   };
 }
 

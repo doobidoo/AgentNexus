@@ -23,7 +23,7 @@ export interface VectorSearchResult {
 }
 
 export class VectorSearch extends AbstractTool {
-  private client: WeaviateClient;
+  private client!: WeaviateClient; // Use definite assignment assertion
   private defaultCollection: string = 'Documents';
   private connectionStatus: 'connected' | 'disconnected' | 'connecting' = 'connecting';
 
@@ -35,10 +35,68 @@ export class VectorSearch extends AbstractTool {
       '1.0.0'
     );
 
+    // Check if Weaviate is enabled
+    const enableWeaviate = process.env.ENABLE_WEAVIATE === 'true';
+    
     // Get configuration from environment variables
     const host = process.env.WEAVIATE_HOST || 'localhost:8080';
     const scheme = process.env.WEAVIATE_SCHEME || 'http';
     const apiKey = process.env.WEAVIATE_API_KEY;
+    
+    // Register the required configuration
+    const indexName = process.env.WEAVIATE_INDEX_NAME || process.env.NEXUS_TOOL_VECTORSEARCH_INDEXNAME || 'AgentNexus';
+    
+    // Register config with the ToolConfigManager
+    if (typeof window === 'undefined') {
+      try {
+        // Dynamic import to avoid issues in browser environment
+        const { configManager } = require('./config-manager');
+        
+        // Register configuration schema
+        configManager.registerToolConfig(
+          'vectorSearch',
+          {
+            properties: {
+              indexName: {
+                type: 'string',
+                description: 'Name of the index/collection to use for vector storage',
+                default: indexName
+              },
+              host: {
+                type: 'string',
+                description: 'Weaviate host address',
+                default: host
+              },
+              scheme: {
+                type: 'string',
+                description: 'Weaviate connection scheme (http/https)',
+                default: scheme
+              },
+              enabled: {
+                type: 'boolean',
+                description: 'Whether Weaviate integration is enabled',
+                default: enableWeaviate
+              }
+            },
+            required: ['indexName']
+          },
+          {
+            indexName,
+            host,
+            scheme,
+            enabled: enableWeaviate
+          }
+        );
+      } catch (error) {
+        console.error('Failed to register vector search configuration:', error);
+      }
+    }
+
+    if (!enableWeaviate) {
+      console.log('Weaviate integration is disabled. Set ENABLE_WEAVIATE=true to enable.');
+      this.connectionStatus = 'disconnected';
+      return;
+    }
 
     // Initialize Weaviate client
     const clientConfig: any = {
@@ -51,10 +109,15 @@ export class VectorSearch extends AbstractTool {
       clientConfig.apiKey = new weaviate.ApiKey(apiKey);
     }
 
-    this.client = weaviate.client(clientConfig);
-    
-    // Check connection status
-    this.checkConnection();
+    try {
+      this.client = weaviate.client(clientConfig);
+      
+      // Check connection status
+      this.checkConnection();
+    } catch (error) {
+      console.error('Failed to initialize Weaviate client:', error);
+      this.connectionStatus = 'disconnected';
+    }
   }
   
   /**
@@ -77,6 +140,24 @@ export class VectorSearch extends AbstractTool {
    * Execute vector search with the provided parameters
    */
   async execute(input: ToolInput): Promise<ToolOutput> {
+    // Check if Weaviate is enabled via config manager
+    let isEnabled = process.env.ENABLE_WEAVIATE === 'true';
+    
+    try {
+      if (typeof window === 'undefined') {
+        const { configManager } = require('./config-manager');
+        const config = configManager.getToolConfig('vectorSearch');
+        isEnabled = config.enabled === true;
+      }
+    } catch (error) {
+      console.warn('Error accessing vector search configuration:', error);
+    }
+    
+    // Return a graceful error if disabled
+    if (!isEnabled) {
+      return this.createErrorOutput('Weaviate integration is disabled. Set ENABLE_WEAVIATE=true to enable.', input);
+    }
+    
     // Check connection status before executing
     if (this.connectionStatus === 'disconnected') {
       const connected = await this.checkConnection();
@@ -193,7 +274,11 @@ export class VectorSearch extends AbstractTool {
         }
         
         return true; // Successful operation
-      }, { params: { action: 'initializeCollection', collection: collectionName } });
+      }, { 
+        params: { action: 'initializeCollection', collection: collectionName },
+        timestamp: new Date().toISOString(),
+        requestId: `init-${collectionName}-${Date.now()}`
+      });
     } catch (error) {
       console.error(`Error initializing collection: ${error}`);
       throw error;
@@ -240,7 +325,11 @@ export class VectorSearch extends AbstractTool {
 
           await batcher.do();
           return true; // Successful operation
-        }, { params: { batchNumber, batchSize } });
+        }, { 
+          params: { batchNumber, batchSize },
+          timestamp: new Date().toISOString(),
+          requestId: `batch-${collection}-${batchNumber}-${Date.now()}`
+        });
       }
 
       console.log(`Added ${documents.length} documents to collection: ${collection}`);
@@ -255,6 +344,12 @@ export class VectorSearch extends AbstractTool {
    * @returns Promise resolving to connection status
    */
   private async checkConnection(): Promise<boolean> {
+    // Skip check if client is not initialized or if Weaviate is disabled
+    if (!this.client || process.env.ENABLE_WEAVIATE !== 'true') {
+      this.connectionStatus = 'disconnected';
+      return false;
+    }
+    
     try {
       // Try to access the schema as a simple connectivity check
       const meta = await this.client.misc.metaGetter().do();

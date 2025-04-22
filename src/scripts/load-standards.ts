@@ -39,7 +39,8 @@ export async function loadStandards(component: string): Promise<string> {
     const content = await readFile(filePath, 'utf-8');
     return content;
   } catch (error) {
-    throw new Error(`Failed to load standards for ${normalizedComponent}: ${error.message}`);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    throw new Error(`Failed to load standards for ${normalizedComponent}: ${errorMessage}`);
   }
 }
 
@@ -58,7 +59,8 @@ export async function handleStandardsCommand(args: string[]): Promise<void> {
     const content = await loadStandards(args[0]);
     console.log(content);
   } catch (error) {
-    console.error(error.message);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error(errorMessage);
   }
 }
 

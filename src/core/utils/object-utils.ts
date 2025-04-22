@@ -17,9 +17,12 @@ export function deepMerge<T extends Record<string, any>>(target: T, source: Reco
   if (!source) return target;
   if (!target) return source as T;
   
+  // Create a mutable copy we can modify
+  const result = { ...target } as Record<string, any>;
+  
   // Merge each property
   for (const key of Object.keys(source)) {
-    const targetValue = target[key];
+    const targetValue = result[key];
     const sourceValue = source[key];
     
     // If both values are objects, merge them recursively
@@ -31,14 +34,14 @@ export function deepMerge<T extends Record<string, any>>(target: T, source: Reco
       typeof sourceValue === 'object' && 
       !Array.isArray(sourceValue)
     ) {
-      target[key] = deepMerge(targetValue, sourceValue);
+      result[key] = deepMerge(targetValue, sourceValue);
     } else if (sourceValue !== undefined) {
       // Otherwise, just overwrite target with source
-      target[key] = sourceValue;
+      result[key] = sourceValue;
     }
   }
   
-  return target;
+  return result as T;
 }
 
 /**
@@ -55,7 +58,7 @@ export function mergeWithDefaults<T extends Record<string, any>>(target: T, defa
   if (!target) return Object.assign({}, defaults) as T;
   
   // Create a copy of target to avoid modifying original
-  const result = Object.assign({}, target);
+  const result = { ...target } as Record<string, any>;
   
   // Apply defaults for each property
   for (const key of Object.keys(defaults)) {
@@ -78,7 +81,7 @@ export function mergeWithDefaults<T extends Record<string, any>>(target: T, defa
     result[key] = defaults[key];
   }
   
-  return result;
+  return result as T;
 }
 
 /**
@@ -220,8 +223,12 @@ export function setNestedProperty<T extends Record<string, any>>(
     return obj;
   }
   
+  // Create a deep copy to avoid modifying the original
+  const result = deepClone(obj);
   const parts = path.split('.');
-  let current = obj;
+  
+  // Use type assertion for the mutable copy
+  let current = result as Record<string, any>;
   
   for (let i = 0; i < parts.length - 1; i++) {
     const part = parts[i];
@@ -232,7 +239,7 @@ export function setNestedProperty<T extends Record<string, any>>(
   }
   
   current[parts[parts.length - 1]] = value;
-  return obj;
+  return result;
 }
 
 /**
@@ -250,19 +257,23 @@ export function deleteNestedProperty<T extends Record<string, any>>(
     return obj;
   }
   
+  // Create a deep copy to avoid modifying the original
+  const result = deepClone(obj);
   const parts = path.split('.');
-  let current = obj;
+  
+  // Use type assertion for the mutable copy
+  let current = result as Record<string, any>;
   
   for (let i = 0; i < parts.length - 1; i++) {
     const part = parts[i];
     if (!current[part] || typeof current[part] !== 'object') {
-      return obj; // Property path doesn't exist
+      return result; // Property path doesn't exist
     }
     current = current[part];
   }
   
   delete current[parts[parts.length - 1]];
-  return obj;
+  return result;
 }
 
 /**

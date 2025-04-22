@@ -23,6 +23,49 @@ export class TextGeneration extends AbstractTool {
       ['text generation', 'content creation', 'writing', 'summarization'],
       '1.0.0'
     );
+    
+    // Get default model from environment or use a fallback
+    const defaultModel = process.env.NEXUS_TOOL_TEXTGENERATION_MODEL || 'default';
+    
+    // Register config with the ToolConfigManager
+    if (typeof window === 'undefined') {
+      try {
+        // Dynamic import to avoid issues in browser environment
+        const { configManager } = require('./config-manager');
+        
+        // Register configuration schema
+        configManager.registerToolConfig(
+          'textGeneration',
+          {
+            properties: {
+              model: {
+                type: 'string',
+                description: 'Default language model to use for text generation',
+                default: defaultModel
+              },
+              temperature: {
+                type: 'number',
+                description: 'Default temperature for text generation (0-1)',
+                default: 0.7
+              },
+              maxTokens: {
+                type: 'number',
+                description: 'Default maximum tokens to generate',
+                default: 1000
+              }
+            },
+            required: ['model']
+          },
+          {
+            model: defaultModel,
+            temperature: 0.7,
+            maxTokens: 1000
+          }
+        );
+      } catch (error) {
+        console.error('Failed to register text generation configuration:', error);
+      }
+    }
   }
   
   /**
