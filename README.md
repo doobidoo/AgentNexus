@@ -1,3 +1,16 @@
+# Project AgentNexus
+
+![Status](https://img.shields.io/badge/Status-Work%20In%20Progress-yellow)
+![Version](https://img.shields.io/badge/Version-Pre--alpha-orange)
+![Stage](https://img.shields.io/badge/Stage-Early%20Development-red)
+![Documentation](https://img.shields.io/badge/Documentation-In%20Progress-yellow)
+
+## ⚠️ Work In Progress ⚠️
+
+> **IMPORTANT**: Project AgentNexus is currently in early development and is **not ready for production use**. APIs are experimental and subject to significant changes. We welcome contributors, testers, and feedback as we work toward a stable release.
+
+A TypeScript-based autonomous agent framework with modular systems for memory, planning, and tool integration. Features vector-based recall, multi-strategy planning, and extensible tools for AI agent development.
+
 # Agent Nexus
 
 Agent Nexus is an advanced cognitive agent architecture framework that enables AI systems to operate with human-like reasoning abilities. By integrating memory management, specialized tools, strategic planning, and action execution into a cohesive system, Agent Nexus creates agents that can solve complex problems, learn from experience, and provide continuous value.
