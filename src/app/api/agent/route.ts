@@ -6,14 +6,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { AgentNexus } from '@/core/agent';
 import { modelManager } from '@/core/models/factory';
 
-// Agent singleton (in a real application, you'd manage this differently)
-let agentInstance: AgentNexus | null = null;
+// Shared across API routes - IMPORTANT to use the same instance
+export let agentInstance: AgentNexus | null = null;
 
 function getAgent(provider?: string, model?: string) {
   try {
     if (!agentInstance) {
-      // If no specific provider is requested, use the first available one
-      const defaultProvider = provider || modelManager.listProviders()[0] || 'demo';
+      // If no specific provider is requested, use the default from model manager
+      // This should be properly set based on DEFAULT_MODEL_PROVIDER env var
+      const defaultProvider = provider || modelManager.listProviders().find(p => p !== 'demo') || 'demo';
       
       if (!defaultProvider) {
         throw new Error('No model providers available. Please configure at least one provider.');

@@ -5,20 +5,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AgentNexus } from '@/core/agent';
 import { modelManager } from '@/core/models/factory';
-
-// Agent singleton (in a real application, you'd manage this differently)
-let agentInstance: AgentNexus | null = null;
+import { agentInstance } from '../route'; // Import the shared agent instance
 
 function getAgent() {
   if (!agentInstance) {
-    const firstProvider = modelManager.listProviders()[0];
+    // Get default provider from model manager - prefer real providers over demo
+    const defaultProvider = modelManager.listProviders().find(p => p !== 'demo') || modelManager.listProviders()[0];
     
-    if (!firstProvider) {
+    if (!defaultProvider) {
       throw new Error('No model providers available. Please configure at least one provider.');
     }
     
-    agentInstance = new AgentNexus({
-      modelProvider: firstProvider,
+    return new AgentNexus({
+      modelProvider: defaultProvider,
       agentName: "Agent Nexus",
       description: "An advanced cognitive agent architecture with human-like reasoning capabilities"
     });
